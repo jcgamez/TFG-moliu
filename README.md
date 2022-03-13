@@ -2,10 +2,11 @@
 
 ## Web application
 
-This webapp is part of **Moliu** project. Its objective is the patient, activities, plays and machine learning models management.
+This webapp is part of **Moliu** project. Its objective is the patients, specialists, activities, games and machine learning models management.
 
 Managed entities:
 * Patient: User who performs activities
-* Specialist: User responsible for managing Moliu software
-* Activities: Interactive tasks proposed to patients
-* Play: Activity performed by a patient
+* Specialist: Admin user responsible for managing Moliu software
+* Activity: Interactive task proposed to patients
+* Game: Activity performed by a patient
+* Model: File that represents what was learned using machine learning techniques

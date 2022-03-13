@@ -32,7 +32,7 @@ module.exports = {
           "patient",
           "security",
           "specialist",
-          "play",
+          "game",
           "ia",
         ]
     ],
