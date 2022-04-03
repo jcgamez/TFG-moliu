@@ -1,0 +1,111 @@
+{% extends "moliuWeb/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+      <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Partidas</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:index' %}">Moliu</a></li>
+        <li class="breadcrumb-item active">Partidas</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Datos de las Partidas guardadas</h3>
+            <form action="{% url 'moliuWeb:games' %}" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.video }}
+              <button type="button" class="float-right btn bg-success">Importar partida</button>
+            </form>
+          </div>
+          <div class="card-body">
+            <table id="example2" class="table table-hover">
+              <thead>
+              <tr>
+                <th>Actividad</th>
+                <th>Paciente</th>
+                <th>Fecha</th>
+                <th>Modelo</th>
+                <th>Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for game in object_list %}
+              <tr>
+                <td> {{ game.activity }} </td>
+                <td> {{ game.patient }} </td>
+                <td> {{ game.date }} </td>
+                <td> {{ game.model }} </td>
+                <td><div class="btn bg-secondary">Clasificar frames</div></td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+{{ block.super }}
+
+<!-- DataTables  & Plugins -->
+<script src="{% static 'moliuWeb/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+<!-- Page specific script -->
+<script>
+  $(function () {
+    $('form button').click(
+      function() {
+        $('form input').click();
+      }
+    );
+    $('form input').on('change', function() {
+      this.form.submit();
+    });
+    $('#games').addClass('active');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+
+{% endblock %}

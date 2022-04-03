@@ -1,0 +1,130 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'moliuWeb/plugins/fontawesome-free/css/all.min.css' %}">
+
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'moliuWeb/dist/css/adminlte.min.css' %}">
+
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet" href="{% static 'moliuWeb/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+
+  <title>{% block title %} Moliu {% endblock %}</title>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+  <div class="wrapper">
+
+    <!-- Preloader -->
+    <div class="preloader flex-column justify-content-center align-items-center">
+      <img class="animation__shake" src="{% static 'moliuWeb/dist/img/AdminLTELogo.png' %}" alt="MoliuLogo" height="60" width="60">
+    </div>
+
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+      <!-- Left navbar -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+      </ul>
+
+      <!-- Right navbar -->
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <i class="fas fa-user"></i>
+          specialistName
+        </li>
+      </ul>
+    </nav>
+
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a href="{% url 'moliuWeb:index' %}" class="brand-link">
+        <span class="brand-text font-weight-light">Moliu Administración</span>
+      </a>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item">
+              <a href="{% url 'moliuWeb:patients' %}" id="patients" class="nav-link">
+                <i class="nav-icon fas fa-child"></i>
+                <p>
+                  Pacientes
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'moliuWeb:activities' %}" id="activities" class="nav-link">
+                <i class="nav-icon far fa-image"></i>
+                <p>
+                  Actividades
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'moliuWeb:games' %}" id="games" class="nav-link">
+                <i class="nav-icon fas fa-gamepad"></i>
+                <p>
+                  Partidas
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'moliuWeb:models' %}" id="models" class="nav-link">
+                <i class="nav-icon fas fa-code-branch"></i>
+                <p>
+                  Modelos
+                </p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <div class="content-wrapper">
+      {% block content %}{% endblock %}
+    </div>
+
+    <footer class="main-footer">
+      <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
+      All rights reserved.
+    </footer>
+  </div>
+
+  {% block javascript %}
+
+  <!-- jQuery -->
+  <script src="{% static 'moliuWeb/plugins/jquery/jquery.min.js' %}"></script>
+
+  <!-- jQuery UI 1.11.4 -->
+  <script src="{% static 'moliuWeb/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+
+  <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+  <script>
+    $.widget.bridge('uibutton', $.ui.button)
+  </script>
+
+  <!-- Bootstrap 4 -->
+  <script src="{% static 'moliuWeb/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- AdminLTE App -->
+  <script src="{% static 'moliuWeb/dist/js/adminlte.js' %}"></script>
+
+  <!-- overlayScrollbars -->
+  <script src="{% static 'moliuWeb/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+
+  {% endblock %}
+</body>
+</html>
