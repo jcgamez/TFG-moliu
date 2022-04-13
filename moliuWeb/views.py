@@ -3,7 +3,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import generic
 from .models import Patient, Activity, Game, Model
-from .forms import UploadGame
+from .forms import ImportGame
+from .utils import importGame
 
 
 def index(request):
@@ -28,27 +29,23 @@ class ActivitiesView(generic.ListView):
 
 class GamesView(generic.ListView):
     model = Game
+    importGameForm = ImportGame
     template_name = "moliuWeb/games.html"
-    form = UploadGame
 
     def get_context_data(self):
-        form = self.form()
         context = super().get_context_data()
-        context["form"] = form
+        context["form"] = self.importGameForm()
         return context
 
     def post(self, request):
-        form = self.form(request.POST, request.FILES)
+        importGameForm = self.importGameForm(request.POST, request.FILES)
 
-        if form.is_valid():
-            video = form.cleaned_data["video"]
-            activity0 = Activity.objects.get(name="actividad0")
-            patient0 = Patient.objects.get(name="paciente0")
-            game = Game(activity=activity0, patient=patient0, video=video)
-            game.save()
+        if importGameForm.is_valid():
+            video = importGameForm.cleaned_data["video"]
+            importGame(video)
             return HttpResponseRedirect(reverse("moliuWeb:games"))
 
-        return render(request, self.template_name, {"form": form})
+        return render(request, self.template_name, {"form": importGameForm})
 
 
 class ModelsView(generic.ListView):
