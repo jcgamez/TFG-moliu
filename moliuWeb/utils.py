@@ -14,6 +14,7 @@ def importGame(gameVideo) -> None:
 
 def extractFramesFromVideo(game: Game) -> None:
     try:
+        print(game.video.path)
         videoInfo = ffmpeg.probe(game.video.path)
     except ffmpeg.Error as e:
         print("stdout:", e.stdout.decode("utf8"))
@@ -41,8 +42,10 @@ def extractFramesFromVideo(game: Game) -> None:
 def createPostures(game: Game):
     framesDir = os.path.join(os.path.dirname(game.video.path), "frames")
 
-    # THIS DEPENDS ON THE OS #
-    gameName = game.video.path.split("\\")[-2]
+    if os.name == "nt":
+        gameName = game.video.path.split("\\")[-2]
+    elif os.name == "posix":
+        gameName = game.video.path.split("/")[-2]
 
     for frame in os.listdir(framesDir):
         frameImage = "gamesVideos/" + gameName + "/frames/" + frame
