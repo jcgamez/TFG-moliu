@@ -55,7 +55,7 @@ class Game(models.Model):
         return activity + "-" + patient + "-" + date
 
 
-class Frame(models.Model):
+class Posture(models.Model):
     class Scores(models.IntegerChoices):
         NON_SCORED = -1
         VERY_BAD = 0
@@ -65,5 +65,8 @@ class Frame(models.Model):
         VERY_GOOD = 100
 
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    score = models.IntegerField(choices=Scores.choices, default=Scores.NON_SCORED)
-    frameImage = models.CharField(max_length=250)
+    score = models.IntegerField(
+        choices=Scores.choices, default=Scores.NON_SCORED, null=True, blank=True
+    )
+    # isClassified = models.BooleanField(default=False)
+    image = models.CharField(max_length=250)

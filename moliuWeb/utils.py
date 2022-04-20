@@ -1,4 +1,4 @@
-from .models import Patient, Activity, Game, Frame
+from .models import Patient, Activity, Game, Posture
 import os
 import ffmpeg
 
@@ -9,7 +9,7 @@ def importGame(gameVideo) -> None:
     game = Game(activity=activity0, patient=patient0, video=gameVideo)
     game.save()
     extractFramesFromVideo(game)
-    createFrames(game)
+    createPostures(game)
 
 
 def extractFramesFromVideo(game: Game) -> None:
@@ -38,11 +38,13 @@ def extractFramesFromVideo(game: Game) -> None:
         raise e
 
 
-def createFrames(game: Game):
+def createPostures(game: Game):
     framesDir = os.path.join(os.path.dirname(game.video.path), "frames")
+
+    # THIS DEPENDS ON THE OS #
     gameName = game.video.path.split("\\")[-2]
 
     for frame in os.listdir(framesDir):
         frameImage = "gamesVideos/" + gameName + "/frames/" + frame
-        f = Frame(game=game, frameImage=frameImage)
-        f.save()
+        p = Posture(game=game, image=frameImage)
+        p.save()

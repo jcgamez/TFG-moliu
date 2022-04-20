@@ -27,11 +27,13 @@
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Datos de las Partidas guardadas</h3>
-            <form action="{% url 'moliuWeb:games' %}" method="post" enctype="multipart/form-data">
-              {% csrf_token %}
-              {{ form.video }}
-              <button type="button" class="float-right btn bg-success">Importar partida</button>
-            </form>
+            <div class="card-tools">
+              <form action="{% url 'moliuWeb:games' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.video }}
+                <button type="button" class="btn bg-success">Importar partida</button>
+              </form>
+            </div>
           </div>
           <div class="card-body">
             <table id="example2" class="table table-hover">
@@ -51,7 +53,13 @@
                 <td> {{ game.patient }} </td>
                 <td> {{ game.date }} </td>
                 <td> {{ game.model }} </td>
-                <td><div class="btn bg-secondary">Clasificar frames</div></td>
+                <td>
+                  <div class="btn bg-secondary">
+                    <a href="{% url 'moliuWeb:classifyPostures' game.id %}">
+                      Clasificar posturas
+                    </a>
+                  </div>
+                </td>
               </tr>
               {% endfor %}
               </tbody>

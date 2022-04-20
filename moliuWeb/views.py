@@ -1,10 +1,11 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views import generic
-from .models import Patient, Activity, Game, Model
-from .forms import ImportGame
+from .models import Posture, Patient, Activity, Game, Model
+from .forms import ImportGame, ClassifyPosture
 from .utils import importGame
+import random
 
 
 def index(request):
@@ -46,6 +47,33 @@ class GamesView(generic.ListView):
             return HttpResponseRedirect(reverse("moliuWeb:games"))
 
         return render(request, self.template_name, {"form": importGameForm})
+
+
+def classifyPostures(request, gameId):
+    game = get_object_or_404(Game, pk=gameId)
+
+    if request.method == "GET":
+        postures = Posture.objects.filter(game=game, score=Posture.Scores.NON_SCORED)
+        posture = random.choice(postures)
+        classifyPostureForm = ClassifyPosture
+        return render(
+            request,
+            "moliuWeb/classifyPostures.html",
+            {"posture": posture, "form": classifyPostureForm(instance=posture)},
+        )
+
+    if request.method == "POST":
+        posture = Posture.objects.get(image=request.POST["image"])
+        classifyPostureForm = ClassifyPosture(request.POST, instance=posture)
+
+        if classifyPostureForm.is_valid():
+            classifyPostureForm.save()
+        else:
+            print(classifyPostureForm.errors)
+
+        return HttpResponseRedirect(
+            reverse("moliuWeb:classifyPostures", kwargs={"gameId": gameId}),
+        )
 
 
 class ModelsView(generic.ListView):
