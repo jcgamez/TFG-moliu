@@ -26,7 +26,9 @@ SECRET_KEY = "django-insecure-6v038^u+hxi8hnb-!8ak+*ltq4=zwy(*_37j!m@o&2s2b%h&bg
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS: list[str] = []
+# https://docs.docker.com/samples/django/
+ALLOWED_HOSTS: list[str] = ["*"]
+# ALLOWED_HOSTS: list[str] = []
 
 
 # Application definition
@@ -78,11 +80,11 @@ WSGI_APPLICATION = "moliu.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "moliucamp_db",
-        "USER": "moliu_admin",
-        "PASSWORD": "jkinect2022",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": os.environ.get("POSTGRES_NAME"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
