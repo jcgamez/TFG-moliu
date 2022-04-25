@@ -38,9 +38,18 @@
 
       <!-- Right navbar -->
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <i class="fas fa-user mr-1"></i>
-          specialistName
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-toggle="dropdown" href="#">
+            <i class="fas fa-user mr-1"></i>
+            {{user.username}}
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <span class="dropdown-item dropdown-header">Especialista</span>
+            <div class="dropdown-divider"></div>
+            <a href="{% url 'moliuWeb:logout' %}" class="dropdown-item">
+              <i class="fas fa-sign-out-alt mr-2"></i> Cerrar sesión
+            </a>
+          </div>
         </li>
       </ul>
     </nav>

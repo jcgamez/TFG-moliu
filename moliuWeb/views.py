@@ -1,18 +1,31 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views import generic
 from .models import Posture, Patient, Activity, Game, Model
-from .forms import ImportGame, ClassifyPosture
+from .forms import ImportGame, ClassifyPosture, LoginForm
 from .utils import importGame
 import random
 
 
+class LoginView(auth_views.LoginView):
+    template_name = "moliuWeb/login.html"
+    form_class = LoginForm
+
+
+class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
+    next_page = "moliuWeb:login"
+
+
+@login_required
 def index(request):
     return render(request, "moliuWeb/index.html")
 
 
-class PatientsView(generic.ListView):
+class PatientsView(LoginRequiredMixin, generic.ListView):
     model = Patient
     template_name = "moliuWeb/patients.html"
 
@@ -20,7 +33,7 @@ class PatientsView(generic.ListView):
         pass
 
 
-class ActivitiesView(generic.ListView):
+class ActivitiesView(LoginRequiredMixin, generic.ListView):
     model = Activity
     template_name = "moliuWeb/activities.html"
 
@@ -28,7 +41,7 @@ class ActivitiesView(generic.ListView):
         pass
 
 
-class GamesView(generic.ListView):
+class GamesView(LoginRequiredMixin, generic.ListView):
     model = Game
     importGameForm = ImportGame
     template_name = "moliuWeb/games.html"
@@ -49,6 +62,7 @@ class GamesView(generic.ListView):
         return render(request, self.template_name, {"form": importGameForm})
 
 
+@login_required
 def classifyPostures(request, gameId):
     game = get_object_or_404(Game, pk=gameId)
 
@@ -76,7 +90,7 @@ def classifyPostures(request, gameId):
         )
 
 
-class ModelsView(generic.ListView):
+class ModelsView(LoginRequiredMixin, generic.ListView):
     model = Model
     template_name = "moliuWeb/models.html"
 
