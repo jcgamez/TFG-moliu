@@ -8,3 +8,6 @@ COPY requirements.txt /code/
 RUN pip install -r requirements.txt
 RUN apk add --update ffmpeg
 COPY . /code/
+
+RUN adduser -Ds /bin/bash moliu
+USER moliu
