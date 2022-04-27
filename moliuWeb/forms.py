@@ -39,4 +39,5 @@ class ClassifyPosture(forms.ModelForm):
             "score": forms.Select(attrs={"style": "display:none"}),
             "game": forms.Select(attrs={"style": "display:none"}),
             "image": forms.TextInput(attrs={"style": "display:none"}),
+            "isClassified": forms.CheckboxInput(attrs={"style": "display:none"}),
         }

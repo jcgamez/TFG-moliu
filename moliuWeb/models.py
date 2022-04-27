@@ -57,7 +57,6 @@ class Game(models.Model):
 
 class Posture(models.Model):
     class Scores(models.IntegerChoices):
-        NON_SCORED = -1
         VERY_BAD = 0
         BAD = 25
         REGULAR = 50
@@ -65,8 +64,6 @@ class Posture(models.Model):
         VERY_GOOD = 100
 
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    score = models.IntegerField(
-        choices=Scores.choices, default=Scores.NON_SCORED, null=True, blank=True
-    )
-    # isClassified = models.BooleanField(default=False)
+    score = models.IntegerField(choices=Scores.choices, default=None, null=True, blank=True)
+    isClassified = models.BooleanField(default=False)
     image = models.CharField(max_length=250)

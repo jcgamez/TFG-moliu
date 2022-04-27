@@ -10,6 +10,6 @@ urlpatterns = [
     path("patients", views.PatientsView.as_view(), name="patients"),
     path("activities", views.ActivitiesView.as_view(), name="activities"),
     path("games", views.GamesView.as_view(), name="games"),
-    path("games/classify/<int:gameId>", views.classifyPostures, name="classifyPostures"),
+    path("games/classify/<int:gameId>", views.ClassifyPostures.as_view(), name="classifyPostures"),
     path("models", views.ModelsView.as_view(), name="models"),
 ]

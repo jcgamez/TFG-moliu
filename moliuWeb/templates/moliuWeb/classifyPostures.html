@@ -55,7 +55,7 @@
             </h3>
           </div>
           <div class="card-body">
-            <button class="score-option mb-3 btn bg-info" style="width: 100%;" value="{{ posture.Scores.NON_SCORED }}">
+            <button class="score-option mb-3 btn bg-info" style="width: 100%;" value="">
               <h2 class="mb-0 text-center text-bold">
                 No puntuar
               </h2>
@@ -99,6 +99,7 @@
                   {{ form.game }}
                   {{ form.score }}
                   {{ form.image }}
+                  {{ form.isClassified }}
                   <button type="submit" class="btn bg-info float-left">Siguiente postura</button>
                 </form>
               <!-- ./col -->
@@ -126,7 +127,13 @@
     $(".score-option").click(function(){
         $(".score-option").each((index, element) => element.style.border = null);
         this.style.border = "5px blue solid";
-        document.getElementById('id_score').value=this.value;
+        let scoreOfPosture = this.value;
+        if(scoreOfPosture === "") {
+          document.getElementById('id_isClassified').checked = false;
+        } else {
+          document.getElementById('id_isClassified').checked = true;
+        }
+        document.getElementById('id_score').value=scoreOfPosture;
     });
   });
 </script>

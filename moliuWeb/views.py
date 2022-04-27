@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
-from django.views import generic
+from django.views import View, generic
 from .models import Posture, Patient, Activity, Game, Model
 from .forms import ImportGame, ClassifyPosture, LoginForm
 from .utils import importGame
@@ -62,12 +62,10 @@ class GamesView(LoginRequiredMixin, generic.ListView):
         return render(request, self.template_name, {"form": importGameForm})
 
 
-@login_required
-def classifyPostures(request, gameId):
-    game = get_object_or_404(Game, pk=gameId)
-
-    if request.method == "GET":
-        postures = Posture.objects.filter(game=game, score=Posture.Scores.NON_SCORED)
+class ClassifyPostures(LoginRequiredMixin, View):
+    def get(self, request, gameId):
+        game = get_object_or_404(Game, pk=gameId)
+        postures = Posture.objects.filter(game=game, isClassified=False)
         posture = random.choice(postures)
         classifyPostureForm = ClassifyPosture
         return render(
@@ -76,7 +74,7 @@ def classifyPostures(request, gameId):
             {"posture": posture, "form": classifyPostureForm(instance=posture)},
         )
 
-    if request.method == "POST":
+    def post(self, request, gameId):
         posture = Posture.objects.get(image=request.POST["image"])
         classifyPostureForm = ClassifyPosture(request.POST, instance=posture)
 
