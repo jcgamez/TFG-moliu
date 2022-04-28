@@ -65,7 +65,7 @@ class GamesView(LoginRequiredMixin, generic.ListView):
 class ClassifyPostures(LoginRequiredMixin, View):
     def get(self, request, gameId):
         game = get_object_or_404(Game, pk=gameId)
-        postures = Posture.objects.filter(game=game, isClassified=False)
+        postures = Posture.objects.filter(game=game, isScored=False)
         posture = random.choice(postures)
         classifyPostureForm = ClassifyPosture
         return render(

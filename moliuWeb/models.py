@@ -65,5 +65,5 @@ class Posture(models.Model):
 
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     score = models.IntegerField(choices=Scores.choices, default=None, null=True, blank=True)
-    isClassified = models.BooleanField(default=False)
+    isScored = models.BooleanField(default=False)
     image = models.CharField(max_length=250)

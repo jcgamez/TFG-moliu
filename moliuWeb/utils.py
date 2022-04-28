@@ -47,7 +47,7 @@ def createPostures(game: Game):
     elif os.name == "posix":
         gameName = game.video.path.split("/")[-2]
 
-    for frame in os.listdir(framesDir):
+    for frame in sorted(os.listdir(framesDir)):
         frameImage = "gamesVideos/" + gameName + "/frames/" + frame
         p = Posture(game=game, image=frameImage)
         p.save()
