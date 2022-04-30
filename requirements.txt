@@ -2,3 +2,4 @@ Django==4.0.2
 psycopg2-binary==2.9.3
 ffmpeg-python==0.2.0
 shortuuid==1.0.8
+python-magic==0.4.25

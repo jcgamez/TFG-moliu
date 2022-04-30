@@ -14,7 +14,6 @@ def importGame(gameVideo) -> None:
 
 def extractFramesFromVideo(game: Game) -> None:
     try:
-        print(game.video.path)
         videoInfo = ffmpeg.probe(game.video.path)
     except ffmpeg.Error as e:
         print("stdout:", e.stdout.decode("utf8"))

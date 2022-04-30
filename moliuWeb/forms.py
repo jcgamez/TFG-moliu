@@ -1,6 +1,8 @@
 from django import forms
 from .models import Game, Posture
 from django.contrib.auth import forms as authForms
+from django.core.exceptions import ValidationError
+import magic
 
 
 class LoginForm(authForms.AuthenticationForm):
@@ -29,6 +31,12 @@ class ImportGame(forms.ModelForm):
         widgets = {
             "video": forms.ClearableFileInput(attrs={"style": "display:none"}),
         }
+
+    def clean_video(self):
+        data = self.cleaned_data["video"]
+        if magic.from_buffer(data.read(2048), mime=True) != "video/x-msvideo":
+            raise (ValidationError('El archivo de la partida debe ser ".avi"'))
+        return data
 
 
 class ClassifyPosture(forms.ModelForm):

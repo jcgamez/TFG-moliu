@@ -1,8 +1,9 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.urls import reverse
 from django.views import View, generic
 from .models import Posture, Patient, Activity, Game, Model
@@ -58,16 +59,25 @@ class GamesView(LoginRequiredMixin, generic.ListView):
             video = importGameForm.cleaned_data["video"]
             importGame(video)
             return HttpResponseRedirect(reverse("moliuWeb:games"))
-
-        return render(request, self.template_name, {"form": importGameForm})
+        else:
+            context = {"object_list": Game.objects.all(), "form": importGameForm}
+            return render(request, self.template_name, context=context)
 
 
 class ClassifyPostures(LoginRequiredMixin, View):
     def get(self, request, gameId):
         game = get_object_or_404(Game, pk=gameId)
         postures = Posture.objects.filter(game=game, isScored=False)
+
+        if not postures:
+            messages.info(
+                request, "Todas las posturas de la partida seleccionada han sido ya puntuadas"
+            )
+            return redirect("moliuWeb:games")
+
         posture = random.choice(postures)
         classifyPostureForm = ClassifyPosture
+
         return render(
             request,
             "moliuWeb/classifyPostures.html",
