@@ -1,5 +1,5 @@
 from django.db import models
-import shortuuid
+import datetime
 
 
 class Patient(models.Model):
@@ -37,8 +37,8 @@ class Model(models.Model):
 
 
 def videoUploadPath(instance, filename):
-    videoUuid = shortuuid.uuid()
-    return "gamesVideos/" + videoUuid + "/" + videoUuid + ".avi"
+    videoName = datetime.datetime.now().strftime("%d_%m_%Y--%H_%M_%S")
+    return "gamesVideos/" + videoName + "/" + videoName + ".avi"
 
 
 class Game(models.Model):
