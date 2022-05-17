@@ -29,10 +29,14 @@
 
     <div class="row gap-3 justify-content-sm-center">
       <div class="col-sm-5 bg-white shadow border border-2 rounded">
-        <p class="fs-3 text-center">Gestionar Pacientes</p>
+        <a href="{% url 'moliuWeb:patients' %}">
+          <p class="fs-3 text-center">Gestionar Pacientes</p>
+        </a>
       </div>
       <div class="col-sm-5 bg-white shadow border border-2 rounded">
-        <p class="fs-3 text-center">Gestionar Actividades</p>
+        <a href="{% url 'moliuWeb:activities' %}">
+          <p class="fs-3 text-center">Gestionar Actividades</p>
+        </a>
       </div>
 
       <div class="col-sm-5 bg-white shadow border border-2 rounded">
@@ -42,7 +46,9 @@
       </div>
 
       <div class="col-sm-5 bg-white shadow border border-2 rounded">
-        <p class="fs-3 text-center">Gestionar Modelos</p>
+        <a href="{% url 'moliuWeb:models' %}">
+          <p class="fs-3 text-center">Gestionar Modelos</p>
+        </a>
       </div>
     </div>
   </div>

@@ -1,4 +1,5 @@
 {% extends 'moliuWeb/base.html' %}
+{% load static %}
 
 {% block content %}
 
@@ -18,6 +19,56 @@
   </div>
 </section>
 
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Datos de los Pacientes guardados</h3>
+            <div class="card-tools">
+              <a href="{% url 'moliuWeb:addPatient' %}">
+                <button type="button" class="btn bg-primary">Añadir paciente</button>
+              </a>
+            </div>
+          </div>
+          <div class="card-body">
+            <table id="example2" class="table table-hover">
+              <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Nickname</th>
+                <th>Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for patient in object_list %}
+              <tr>
+                <td> {{ patient.name }} </td>
+                <td> {{ patient.surnames }} </td>
+                <td> {{ patient.nickname }} </td>
+                <td>
+                  <a href="{% url 'moliuWeb:updatePatient' patient.id %}">
+                    <button type="button" class="btn bg-secondary">Modificar paciente</button>
+                  </a>
+                  <a href="{% url 'moliuWeb:deletePatient' patient.id %}">
+                    <button type="button" class="btn bg-danger">Eliminar paciente</button>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
 
 
@@ -25,10 +76,33 @@
 
 {{ block.super }}
 
+<!-- DataTables  & Plugins -->
+<script src="{% static 'moliuWeb/plugins/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/jszip/jszip.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/pdfmake/pdfmake.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/pdfmake/vfs_fonts.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+<script src="{% static 'moliuWeb/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
 <script>
   $(function () {
       $('#patients').addClass('active');
   });
+  $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
 </script>
 
 {% endblock %}

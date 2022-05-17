@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View, generic
 from .models import Posture, Patient, Activity, Game, Model
 from .forms import ImportGame, ClassifyPosture, LoginForm
@@ -30,16 +30,38 @@ class PatientsView(LoginRequiredMixin, generic.ListView):
     model = Patient
     template_name = "moliuWeb/patients.html"
 
-    def get_queryset(self):
-        pass
+    def get_context_data(self):
+        context = super().get_context_data()
+        return context
+
+
+class PatientCreateView(generic.CreateView):
+    model = Patient
+    fields = ["name", "surnames", "nickname"]
+    template_name = "moliuWeb/addPatient.html"
+    success_url = reverse_lazy("moliuWeb:patients")
+
+
+class PatientUpdateView(generic.UpdateView):
+    model = Patient
+    fields = ["name", "surnames", "nickname"]
+    template_name = "moliuWeb/updatePatient.html"
+    success_url = reverse_lazy("moliuWeb:patients")
+
+
+class PatientDeleteView(generic.DeleteView):
+    model = Patient
+    template_name = "moliuWeb/deletePatient.html"
+    success_url = reverse_lazy("moliuWeb:patients")
 
 
 class ActivitiesView(LoginRequiredMixin, generic.ListView):
     model = Activity
     template_name = "moliuWeb/activities.html"
 
-    def get_queryset(self):
-        pass
+    def get_context_data(self):
+        context = super().get_context_data()
+        return context
 
 
 class GamesView(LoginRequiredMixin, generic.ListView):

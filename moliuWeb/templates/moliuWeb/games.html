@@ -73,11 +73,9 @@
                 <td> {{ game.date }} </td>
                 <td> {{ game.model }} </td>
                 <td>
-                  <div class="btn bg-secondary">
-                    <a href="{% url 'moliuWeb:classifyPostures' game.id %}">
-                      Clasificar posturas
-                    </a>
-                  </div>
+                  <a href="{% url 'moliuWeb:classifyPostures' game.id %}">
+                    <button type="button" class="btn bg-secondary">Clasificar posturas</button>
+                  </a>
                 </td>
               </tr>
               {% endfor %}
