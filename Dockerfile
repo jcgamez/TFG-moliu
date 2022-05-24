@@ -14,15 +14,14 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt \
 
 ARG UID=1000
 
-RUN useradd -u ${UID} -U moliu \
-    && install -d -m 0755 -o moliu -g moliu /app/static
+RUN useradd -u ${UID} -U moliu
 
 WORKDIR /app
 RUN chown -R moliu:moliu /app
 
 USER moliu:moliu
 COPY --chown=moliu:moliu . .
-RUN mkdir media
+RUN mkdir media static
 
 RUN chmod +x entrypoint.sh
 

@@ -92,9 +92,8 @@
 
 <script>
   $(function () {
-      $('#patients').addClass('active');
-  });
-  $('#example2').DataTable({
+    $('#patients').addClass('active');
+    $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
       "searching": false,
@@ -103,6 +102,9 @@
       "autoWidth": false,
       "responsive": true,
     });
+    $('.pagination').addClass('float-right');
+  });
+
 </script>
 
 {% endblock %}

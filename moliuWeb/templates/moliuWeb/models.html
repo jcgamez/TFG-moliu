@@ -28,6 +28,9 @@
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Datos de los Modelos guardados</h3>
+            <div class="card-tools">
+              <button disabled type="button" class="btn bg-primary">Añadir modelo</button>
+            </div>
           </div>
           <div class="card-body">
             <table id="example2" class="table table-hover">
@@ -80,8 +83,7 @@
 <script>
   $(function () {
       $('#models').addClass('active');
-  });
-  $('#example2').DataTable({
+      $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
       "searching": false,
@@ -90,6 +92,8 @@
       "autoWidth": false,
       "responsive": true,
     });
+    $('.pagination').addClass('float-right');
+  });
 </script>
 
 {% endblock %}

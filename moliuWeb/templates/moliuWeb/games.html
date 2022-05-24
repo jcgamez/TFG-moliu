@@ -50,7 +50,7 @@
               <form action="{% url 'moliuWeb:games' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.video }}
-                <button type="button" class="btn bg-success">Importar partida</button>
+                <button type="button" class="btn bg-primary">Importar partida</button>
               </form>
             </div>
           </div>
@@ -75,6 +75,9 @@
                 <td>
                   <a href="{% url 'moliuWeb:classifyPostures' game.id %}">
                     <button type="button" class="btn bg-secondary">Clasificar posturas</button>
+                  </a>
+                  <a href="{% url 'moliuWeb:deleteGame' game.id %}">
+                    <button type="button" class="btn bg-danger">Eliminar partida</button>
                   </a>
                 </td>
               </tr>
@@ -130,6 +133,7 @@
       "autoWidth": false,
       "responsive": true,
     });
+    $('.pagination').addClass('float-right');
   });
 </script>
 

@@ -34,22 +34,26 @@ class PatientsView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data()
         return context
 
+    def get_queryset(self):
+        qs = Patient.objects.all().exclude(name="paciente0")
+        return qs
 
-class PatientCreateView(generic.CreateView):
+
+class PatientCreateView(LoginRequiredMixin, generic.CreateView):
     model = Patient
     fields = ["name", "surnames", "nickname"]
     template_name = "moliuWeb/addPatient.html"
     success_url = reverse_lazy("moliuWeb:patients")
 
 
-class PatientUpdateView(generic.UpdateView):
+class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Patient
     fields = ["name", "surnames", "nickname"]
     template_name = "moliuWeb/updatePatient.html"
     success_url = reverse_lazy("moliuWeb:patients")
 
 
-class PatientDeleteView(generic.DeleteView):
+class PatientDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Patient
     template_name = "moliuWeb/deletePatient.html"
     success_url = reverse_lazy("moliuWeb:patients")
@@ -62,6 +66,10 @@ class ActivitiesView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self):
         context = super().get_context_data()
         return context
+
+    def get_queryset(self):
+        qs = Activity.objects.all().exclude(name="actividad0")
+        return qs
 
 
 class GamesView(LoginRequiredMixin, generic.ListView):
@@ -84,6 +92,12 @@ class GamesView(LoginRequiredMixin, generic.ListView):
         else:
             context = {"object_list": Game.objects.all(), "form": importGameForm}
             return render(request, self.template_name, context=context)
+
+
+class GameDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Game
+    template_name = "moliuWeb/deleteGame.html"
+    success_url = reverse_lazy("moliuWeb:games")
 
 
 class ClassifyPostures(LoginRequiredMixin, View):

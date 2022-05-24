@@ -27,15 +27,25 @@ services:
     build: .
     image: moliuweb
     volumes:
-      - webdata:/app/media
-    ports:
-      - "8100:8000"
+      - webstaticdata:/app/static
+      - webmediadata:/app/media
     depends_on:
       - db
     env_file:
       - .env
 
+  nginx:
+    build: ./nginx
+    volumes:
+      - webstaticdata:/nginx/static
+      - webmediadata:/nginx/media
+    ports:
+      - "8100:8000"
+    depends_on:
+      - web
+
 volumes:
   pgdata:
   pgadmindata:
-  webdata:
+  webstaticdata:
+  webmediadata:

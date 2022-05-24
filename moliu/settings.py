@@ -21,14 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-6v038^u+hxi8hnb-!8ak+*ltq4=zwy(*_37j!m@o&2s2b%h&bg"
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY", "django-insecure-6v038^u+hxi8hnb-!8ak+*lt q4=zwy(*_37j!m@o&2s2b%h&bg"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # https://docs.docker.com/samples/django/
 ALLOWED_HOSTS: list[str] = ["*"]
-# ALLOWED_HOSTS: list[str] = []
+
+# https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8002", "http://0.0.0.0:8102"]
 
 
 # Application definition
@@ -80,10 +84,10 @@ WSGI_APPLICATION = "moliu.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB_NAME"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": "db",
+        "NAME": os.environ.get("POSTGRES_DB_NAME", "postgres"),
+        "USER": os.environ.get("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": 5432,
     }
 }
@@ -117,21 +121,32 @@ TIME_ZONE = "Europe/Madrid"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
+
+# Sessions length
+SESSION_COOKIE_AGE = 300
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# HTTPS settings, suitable for production environment
+# SESSION_COOKIE_SECURE does not work on Docker container
+# SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
