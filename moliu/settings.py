@@ -32,7 +32,7 @@ DEBUG = False
 ALLOWED_HOSTS: list[str] = ["*"]
 
 # https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8002", "http://0.0.0.0:8102"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8002", "http://0.0.0.0:8100"]
 
 
 # Application definition
