@@ -10,13 +10,10 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="{% static 'moliuWeb/plugins/fontawesome-free/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'moliuWeb/css/fontawesome.min.css' %}">
 
   <!-- Theme style -->
-  <link rel="stylesheet" href="{% static 'moliuWeb/dist/css/adminlte.min.css' %}">
-
-  <!-- overlayScrollbars -->
-  <link rel="stylesheet" href="{% static 'moliuWeb/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+  <link rel="stylesheet" href="{% static 'moliuWeb/css/adminlte.min.css' %}">
 
   <title>{% block title %} Moliu {% endblock %}</title>
 </head>
@@ -115,24 +112,13 @@
   {% block javascript %}
 
   <!-- jQuery -->
-  <script src="{% static 'moliuWeb/plugins/jquery/jquery.min.js' %}"></script>
-
-  <!-- jQuery UI 1.11.4 -->
-  <script src="{% static 'moliuWeb/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
-
-  <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-  <script>
-    $.widget.bridge('uibutton', $.ui.button)
-  </script>
+  <script src="{% static 'moliuWeb/js/jquery.min.js' %}"></script>
 
   <!-- Bootstrap 4 -->
-  <script src="{% static 'moliuWeb/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'moliuWeb/js/bootstrap.bundle.min.js' %}"></script>
 
   <!-- AdminLTE App -->
-  <script src="{% static 'moliuWeb/dist/js/adminlte.js' %}"></script>
-
-  <!-- overlayScrollbars -->
-  <script src="{% static 'moliuWeb/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+  <script src="{% static 'moliuWeb/js/adminlte.min.js' %}"></script>
 
   {% endblock %}
 </body>

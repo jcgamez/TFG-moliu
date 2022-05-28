@@ -32,7 +32,7 @@ DEBUG = False
 ALLOWED_HOSTS: list[str] = ["*"]
 
 # https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8002", "http://0.0.0.0:8100"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8100", "http://0.0.0.0:8100"]
 
 
 # Application definition
@@ -147,6 +147,5 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # HTTPS settings, suitable for production environment
-# SESSION_COOKIE_SECURE does not work on Docker container
 # SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
