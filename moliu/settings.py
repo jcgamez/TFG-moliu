@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # https://docs.docker.com/samples/django/
 ALLOWED_HOSTS: list[str] = ["*"]

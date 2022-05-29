@@ -6,54 +6,81 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="{% static 'moliuWeb/css/adminlte.min.css' %}">
   <link href="{% static 'moliuWeb/css/styles.css' %}" rel="stylesheet">
-
   <link href="https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@500&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'moliuWeb/img/favicon.ico' %}">
 
   <title>{% block title %} Moliu {% endblock %}</title>
 </head>
-<body class="bg-gray-dark">
-  <div class="container">
-    <div class="my-5 d-flex justify-content-sm-evenly align-items-center">
-        <div class="">
-          <h1 style="font-size: 5rem;">Moliu</h1>
+<body class="bg-dark">
+  <div class="container-fluid">
+    <div class="row my-5 d-flex justify-content-sm-center align-items-center">
+        <div class="col-sm-4">
+          <h1 style="font-size: 5rem; text-align: center;">Moliu</h1>
           <small style="display: block; text-align: center;">Administración</small>
         </div>
-        <div class="">
-          <h2>Bienvenido {{ user.username }}</h2>
+        <div class="col-sm-1 my-3" >
+          <img class="img-fluid mx-auto d-block" src="{% static 'moliuWeb/img/moliu.svg' %}" alt="Logo Moliu" width="150px"/>
+        </div>
+        <div class="col-sm-4">
+          <h2 style="text-align: center;">Bienvenido {{ user.username }}</h2>
         </div>
     </div>
 
-    <div class="row gap-3 justify-content-sm-center">
-      <div class="col-sm-5 bg-white shadow border border-2 rounded">
+    <div class="row justify-content-sm-center">
+      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:patients' %}">
-          <p class="fs-3 text-center">Gestionar Pacientes</p>
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Pacientes</h2>
+          </button>
         </a>
       </div>
-      <div class="col-sm-5 bg-white shadow border border-2 rounded">
+      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:activities' %}">
-          <p class="fs-3 text-center">Gestionar Actividades</p>
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Actividades</h2>
+          </button>
         </a>
       </div>
 
-      <div class="col-sm-5 bg-white shadow border border-2 rounded">
+      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:games' %}">
-          <p class="fs-3 text-center">Gestionar Partidas</p>
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Partidas</h2>
+          </button>
         </a>
       </div>
 
-      <div class="col-sm-5 bg-white shadow border border-2 rounded">
+      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:models' %}">
-          <p class="fs-3 text-center">Gestionar Modelos</p>
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Modelos</h2>
+          </button>
         </a>
+      </div>
+
+      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-5">
+        <a href="{% url 'moliuWeb:logout' %}">
+          <button type="button" id="btn-logout" class="btn btn-light btn-block" style="height: 100px;">
+            <h2>Cerrar sesión</h2>
+          </button>
+        </a>
+      </div>
+    </div>
+
+    <div class="row justify-content-sm-center mt-5">
+      <div class="col-sm-2">
+        <img class="img-fluid mx-auto d-block" src="{% static 'moliuWeb/img/epsc.png' %}" alt="Logo EPSC" width="300px"/>
+      </div>
+      <div class="col-sm-2">
+        <img class="img-fluid mx-auto d-block" src="{% static 'moliuWeb/img/uco.png' %}" alt="Logo UCO" width="200px"/>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="{% static 'moliuWeb/js/index.js' %}"></script>
 </body>
 </html>
