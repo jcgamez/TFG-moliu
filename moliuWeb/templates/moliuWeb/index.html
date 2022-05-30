@@ -17,28 +17,28 @@
 </head>
 <body class="bg-dark">
   <div class="container-fluid">
-    <div class="row my-5 d-flex justify-content-sm-center align-items-center">
-        <div class="col-sm-4">
+    <div class="row my-5 justify-content-sm-center align-items-center">
+        <div class="col-sm-3">
           <h1 style="font-size: 5rem; text-align: center;">Moliu</h1>
           <small style="display: block; text-align: center;">Administración</small>
         </div>
         <div class="col-sm-1 my-3" >
           <img class="img-fluid mx-auto d-block" src="{% static 'moliuWeb/img/moliu.svg' %}" alt="Logo Moliu" width="150px"/>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <h2 style="text-align: center;">Bienvenido {{ user.username }}</h2>
         </div>
     </div>
 
-    <div class="row justify-content-sm-center">
-      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
+    <div class="row justify-content-center">
+      <div class="col-sm-4 p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:patients' %}">
           <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
             <h2>Gestionar Pacientes</h2>
           </button>
         </a>
       </div>
-      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
+      <div class="col-sm-4 p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:activities' %}">
           <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
             <h2>Gestionar Actividades</h2>
@@ -46,7 +46,7 @@
         </a>
       </div>
 
-      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
+      <div class="col-sm-4 p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:games' %}">
           <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
             <h2>Gestionar Partidas</h2>
@@ -54,7 +54,7 @@
         </a>
       </div>
 
-      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-3">
+      <div class="col-sm-4 p-1 mx-5 mt-3">
         <a href="{% url 'moliuWeb:models' %}">
           <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
             <h2>Gestionar Modelos</h2>
@@ -62,7 +62,7 @@
         </a>
       </div>
 
-      <div class="col-sm-4 bg-transparent p-1 mx-5 mt-5">
+      <div class="col-sm-4 p-1 mx-5 mt-5">
         <a href="{% url 'moliuWeb:logout' %}">
           <button type="button" id="btn-logout" class="btn btn-light btn-block" style="height: 100px;">
             <h2>Cerrar sesión</h2>
@@ -73,10 +73,10 @@
 
     <div class="row justify-content-sm-center mt-5">
       <div class="col-sm-2">
-        <img class="img-fluid mx-auto d-block" src="{% static 'moliuWeb/img/epsc.png' %}" alt="Logo EPSC" width="300px"/>
+        <img class="img-fluid mx-auto d-block mb-3" src="{% static 'moliuWeb/img/epsc.png' %}" alt="Logo EPSC" width="300px"/>
       </div>
       <div class="col-sm-2">
-        <img class="img-fluid mx-auto d-block" src="{% static 'moliuWeb/img/uco.png' %}" alt="Logo UCO" width="200px"/>
+        <img class="img-fluid mx-auto d-block mb-3" src="{% static 'moliuWeb/img/uco.png' %}" alt="Logo UCO" width="200px"/>
       </div>
     </div>
   </div>
