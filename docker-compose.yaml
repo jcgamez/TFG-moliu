@@ -9,6 +9,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB_NAME}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: always
 
   pgadmin:
     image: dpage/pgadmin4
@@ -21,7 +22,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     depends_on:
       - db
-    restart: always
+    restart: unless-stopped
 
   web:
     build: .
@@ -33,6 +34,7 @@ services:
       - db
     env_file:
       - .env
+    restart: always
 
   nginx:
     build: ./nginx
@@ -43,6 +45,7 @@ services:
       - "8100:8000"
     depends_on:
       - web
+    restart: always
 
 volumes:
   pgdata:

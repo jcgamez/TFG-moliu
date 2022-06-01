@@ -26,13 +26,18 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 # https://docs.docker.com/samples/django/
 ALLOWED_HOSTS: list[str] = ["*"]
 
 # https://docs.djangoproject.com/en/4.0/ref/settings/#csrf-trusted-origins
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8100", "http://0.0.0.0:8100"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8100",
+    "http://0.0.0.0:8100",
+    "http://150.214.112.164:8100",
+    "http://eupelx13.uco.es:8100",
+]
 
 
 # Application definition

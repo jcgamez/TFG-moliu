@@ -37,7 +37,7 @@ class Model(models.Model):
 
 
 def videoUploadPath(instance, filename):
-    videoName = datetime.datetime.now().strftime("%d_%m_%Y--%H_%M_%S")
+    videoName = datetime.datetime.now().strftime("%Y_%m_%d--%H_%M_%S")
     return "gamesVideos/" + videoName + "/" + videoName + ".avi"
 
 
