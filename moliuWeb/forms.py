@@ -27,15 +27,26 @@ class LoginForm(authForms.AuthenticationForm):
 class ImportGame(forms.ModelForm):
     class Meta:
         model = Game
-        fields = ["video"]
+        fields = ["video", "joints"]
         widgets = {
-            "video": forms.ClearableFileInput(attrs={"style": "display:none"}),
+            "video": forms.ClearableFileInput(
+                attrs={"class": "custom-file-input", "style": "cursor: pointer;"}
+            ),
+            "joints": forms.ClearableFileInput(
+                attrs={"class": "custom-file-input", "style": "cursor: pointer;"}
+            ),
         }
 
     def clean_video(self):
         data = self.cleaned_data["video"]
         if magic.from_buffer(data.read(2048), mime=True) != "video/x-msvideo":
             raise (ValidationError('El archivo de la partida debe ser ".avi"'))
+        return data
+
+    def clean_joints(self):
+        data = self.cleaned_data["joints"]
+        if magic.from_buffer(data.read(2048), mime=True) != "text/plain":
+            raise (ValidationError('El archivo de los joints debe ser ".txt"'))
         return data
 
 

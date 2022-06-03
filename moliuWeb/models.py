@@ -1,5 +1,4 @@
 from django.db import models
-import datetime
 
 
 class Patient(models.Model):
@@ -37,8 +36,13 @@ class Model(models.Model):
 
 
 def videoUploadPath(instance, filename):
-    videoName = datetime.datetime.now().strftime("%Y_%m_%d--%H_%M_%S")
-    return "gamesVideos/" + videoName + "/" + videoName + ".avi"
+    videoName = instance.date.strftime("%Y_%m_%d--%H_%M_%S")
+    return "games/" + videoName + "/" + videoName + ".avi"
+
+
+def jointsUploadPath(instance, filename):
+    jointsName = instance.date.strftime("%Y_%m_%d--%H_%M_%S")
+    return "games/" + jointsName + "/" + jointsName + ".txt"
 
 
 class Game(models.Model):
@@ -47,6 +51,7 @@ class Game(models.Model):
     model = models.ForeignKey(Model, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     video = models.FileField(upload_to=videoUploadPath)
+    joints = models.FileField(upload_to=jointsUploadPath)
 
     def __str__(self) -> str:
         activity = self.activity.__str__()

@@ -82,15 +82,26 @@ class GamesView(LoginRequiredMixin, generic.ListView):
         context["form"] = self.importGameForm()
         return context
 
+
+class GameImportView(LoginRequiredMixin, generic.base.TemplateView):
+    template_name: str = "moliuWeb/importGame.html"
+    importGameForm = ImportGame
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context["form"] = self.importGameForm()
+        return context
+
     def post(self, request):
         importGameForm = self.importGameForm(request.POST, request.FILES)
 
         if importGameForm.is_valid():
             video = importGameForm.cleaned_data["video"]
-            importGame(video)
+            joints = importGameForm.cleaned_data["joints"]
+            importGame(video, joints)
             return HttpResponseRedirect(reverse("moliuWeb:games"))
         else:
-            context = {"object_list": Game.objects.all(), "form": importGameForm}
+            context = {"form": importGameForm}
             return render(request, self.template_name, context=context)
 
 

@@ -9,7 +9,7 @@
   <div class="container-fluid">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0">Partidas</h1>
+        <h1>Partidas</h1>
       </div>
       <div class="col-sm-6">
         <ol class="breadcrumb float-sm-right">
@@ -49,11 +49,14 @@
           <div class="card-header">
             <h3 class="card-title">Datos de las Partidas guardadas</h3>
             <div class="card-tools">
-              <form action="{% url 'moliuWeb:games' %}" method="post" enctype="multipart/form-data">
+              <a href="{% url 'moliuWeb:importGame' %}">
+                <button type="button" class="btn bg-primary">Importar partida</button>
+              </a>
+              <!-- <form action="{% url 'moliuWeb:games' %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.video }}
                 <button type="button" class="btn bg-primary">Importar partida</button>
-              </form>
+              </form> -->
             </div>
           </div>
           <div class="card-body">

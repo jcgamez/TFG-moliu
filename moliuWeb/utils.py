@@ -3,10 +3,10 @@ import os
 import ffmpeg
 
 
-def importGame(gameVideo) -> None:
+def importGame(gameVideo, jointsFile) -> None:
     activity0 = Activity.objects.get(name="actividad0")
     patient0 = Patient.objects.get(name="paciente0")
-    game = Game(activity=activity0, patient=patient0, video=gameVideo)
+    game = Game(activity=activity0, patient=patient0, video=gameVideo, joints=jointsFile)
     game.save()
     extractFramesFromVideo(game)
     createPostures(game)
@@ -47,6 +47,6 @@ def createPostures(game: Game):
         gameName = game.video.path.split("/")[-2]
 
     for frame in sorted(os.listdir(framesDir)):
-        frameImage = "gamesVideos/" + gameName + "/frames/" + frame
+        frameImage = "games/" + gameName + "/frames/" + frame
         p = Posture(game=game, image=frameImage)
         p.save()
