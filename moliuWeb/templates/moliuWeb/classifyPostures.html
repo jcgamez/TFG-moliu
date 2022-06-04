@@ -56,37 +56,37 @@
             </h3>
           </div>
           <div class="card-body">
-            <button class="score-option mb-3 btn bg-danger" style="width: 100%;" value="{{ posture.Scores.VERY_BAD }}">
+            <button class="score-option mb-3 btn bg-danger w-100" value="{{ posture.Scores.VERY_BAD }}">
                 <h2 class="mb-0 text-center text-bold">
                   0
                 </h2>
             </button>
 
-            <button class="score-option mb-3 btn bg-orange" style="width: 100%;" value="{{ posture.Scores.BAD }}">
+            <button class="score-option mb-3 btn bg-orange w-100" value="{{ posture.Scores.BAD }}">
               <h2 class="mb-0 text-center text-bold">
                 25
               </h2>
             </button>
 
-            <button class="score-option mb-3 btn bg-warning" style="width: 100%;" value="{{ posture.Scores.REGULAR }}">
+            <button class="score-option mb-3 btn bg-warning w-100" value="{{ posture.Scores.REGULAR }}">
               <h2 class="mb-0 text-center text-bold">
                 50
               </h2>
             </button>
 
-            <button class="score-option mb-3 btn bg-lime" style="width: 100%;" value="{{ posture.Scores.GOOD }}">
+            <button class="score-option mb-3 btn bg-lime w-100" value="{{ posture.Scores.GOOD }}">
               <h2 class="mb-0 text-center text-bold">
                 75
               </h2>
             </button>
 
-            <button class="score-option btn mb-3 bg-success" style="width: 100%;" value="{{ posture.Scores.VERY_GOOD }}">
+            <button class="score-option btn mb-3 bg-success w-100" value="{{ posture.Scores.VERY_GOOD }}">
               <h2 class="mb-0 text-center text-bold">
                 100
               </h2>
             </button>
 
-            <button class="score-option btn bg-info" style="width: 100%;" value="">
+            <button class="score-option btn bg-info w-100" value="">
               <h2 class="mb-0 text-center text-bold">
                 No sirve
               </h2>
@@ -94,14 +94,14 @@
           </div>
           <!-- /.card-body-->
           <div class="card-footer bg-transparent">
-            <div class="row d-flex justify-content-center">
+            <div class="row justify-content-center">
                 <form id="classifyPosturesForm" action="{% url 'moliuWeb:classifyPostures' posture.game.id %}" method="post">
                   {% csrf_token %}
                   {{ form.game }}
                   {{ form.score }}
                   {{ form.image }}
                   {{ form.isScored }}
-                  <button type="submit" class="btn bg-info float-left">Siguiente postura</button>
+                  <button type="submit" class="btn btn-info">Siguiente postura</button>
                 </form>
               <!-- ./col -->
             </div>

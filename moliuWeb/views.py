@@ -8,7 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import View, generic
 from .models import Posture, Patient, Activity, Game, Model
 from .forms import ImportGame, ClassifyPosture, LoginForm
-from .utils import importGame
+from .utils import importGame, addScoredPosturesToDataFile, createDataFile
 import random
 
 
@@ -103,6 +103,16 @@ class GameImportView(LoginRequiredMixin, generic.base.TemplateView):
         else:
             context = {"form": importGameForm}
             return render(request, self.template_name, context=context)
+
+
+@login_required
+def exportGameData(request, gameId):
+    game = Game.objects.get(pk=gameId)
+
+    dataFile = createDataFile(game)
+    addScoredPosturesToDataFile(game, dataFile)
+
+    return redirect("moliuWeb:games")
 
 
 class GameDeleteView(LoginRequiredMixin, generic.DeleteView):

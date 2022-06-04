@@ -72,3 +72,6 @@ class Posture(models.Model):
     score = models.IntegerField(choices=Scores.choices, default=None, null=True, blank=True)
     isScored = models.BooleanField(default=False)
     image = models.CharField(max_length=250)
+
+    def __str__(self) -> str:
+        return self.image + "-" + self.score.__str__()

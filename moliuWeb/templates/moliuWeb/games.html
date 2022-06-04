@@ -79,10 +79,13 @@
                 <td> {{ game.model }} </td>
                 <td>
                   <a href="{% url 'moliuWeb:classifyPostures' game.id %}">
-                    <button type="button" class="btn bg-secondary">Clasificar posturas</button>
+                    <button type="button" class="btn btn-info">Clasificar posturas</button>
                   </a>
                   <a href="{% url 'moliuWeb:deleteGame' game.id %}">
-                    <button type="button" class="btn bg-danger">Eliminar partida</button>
+                    <button type="button" class="btn btn-danger">Eliminar partida</button>
+                  </a>
+                  <a href="{% url 'moliuWeb:exportGameData' game.id %}">
+                    <button type="button" class="btn btn-dark">Exportar datos</button>
                   </a>
                 </td>
               </tr>

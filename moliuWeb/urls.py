@@ -14,6 +14,7 @@ urlpatterns = [
     path("activities", views.ActivitiesView.as_view(), name="activities"),
     path("games", views.GamesView.as_view(), name="games"),
     path("games/import/", views.GameImportView.as_view(), name="importGame"),
+    path("games/export/<int:gameId>", views.exportGameData, name="exportGameData"),
     path("games/delete/<int:pk>", views.GameDeleteView.as_view(), name="deleteGame"),
     path("games/classify/<int:gameId>", views.ClassifyPostures.as_view(), name="classifyPostures"),
     path("models", views.ModelsView.as_view(), name="models"),

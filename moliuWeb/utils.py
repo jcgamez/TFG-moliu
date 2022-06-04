@@ -1,6 +1,8 @@
+from django.conf import settings
 from .models import Patient, Activity, Game, Posture
 import os
 import ffmpeg
+import datetime
 
 
 def importGame(gameVideo, jointsFile) -> None:
@@ -50,3 +52,33 @@ def createPostures(game: Game):
         frameImage = "games/" + gameName + "/frames/" + frame
         p = Posture(game=game, image=frameImage)
         p.save()
+
+
+def createDataFile(game):
+    gameDate = game.date.strftime("%Y_%m_%d--%H_%M_%S")
+    exportedDataDir = os.path.join(settings.MEDIA_ROOT, "games", gameDate, "exportedData")
+
+    filename = datetime.datetime.now().strftime("%Y_%m_%d--%H_%M_%S") + ".txt"
+    dataFile = os.path.join(exportedDataDir, filename)
+
+    os.system(f"mkdir -p {exportedDataDir} && cp {game.joints.path} {dataFile}")
+
+    return dataFile
+
+
+def addScoredPosturesToDataFile(game, dataFile):
+    postures = Posture.objects.filter(game=game, isScored=True)
+    scoredPostures = {}
+
+    for posture in postures:
+        frameNumber = int(posture.image.split("/")[-1].split(".")[0])
+        scoredPostures[frameNumber] = posture.score
+
+    with open(dataFile, "r+") as f:
+        frames = f.readlines()
+        f.seek(0)
+        f.write(frames[0].strip() + "; 26 --> [Class]\n")
+        for frame in range(1, len(frames)):
+            if frame - 1 in scoredPostures.keys():
+                f.write(frames[frame].strip() + f" {scoredPostures[frame-1]}\n")
+        f.truncate()
