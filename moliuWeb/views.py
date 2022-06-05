@@ -109,8 +109,14 @@ class GameImportView(LoginRequiredMixin, generic.base.TemplateView):
 def exportGameData(request, gameId):
     game = Game.objects.get(pk=gameId)
 
+    if not Posture.objects.filter(game=game, isScored=True):
+        messages.info(request, "Debe clasificar al menos una postura antes de exportar datos")
+        return redirect("moliuWeb:games")
+
     dataFile = createDataFile(game)
     addScoredPosturesToDataFile(game, dataFile)
+
+    messages.success(request, "Datos exportados correctamente y guardados en el servidor")
 
     return redirect("moliuWeb:games")
 

@@ -33,15 +33,13 @@
       </div>
     {% endif %}
 
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert alert-info alert-dismissible">
-          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-          <h5><i class="icon fas fa-info"></i>No quedan posturas por clasificar</h5>
-          {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
+    {% for message in messages %}
+      <div class="alert {{ message.tags }} alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <h5><i class="icon fas fa-info"></i>Información</h5>
+        {{ message }}
+      </div>
+    {% endfor %}
 
     <div class="row">
       <div class="col-12">
