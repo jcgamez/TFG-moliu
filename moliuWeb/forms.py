@@ -2,7 +2,9 @@ from django import forms
 from .models import Game, Posture
 from django.contrib.auth import forms as authForms
 from django.core.exceptions import ValidationError
+from django.conf import settings
 import magic
+import os
 
 
 class LoginForm(authForms.AuthenticationForm):
@@ -60,3 +62,24 @@ class ClassifyPosture(forms.ModelForm):
             "image": forms.TextInput(attrs={"style": "display:none"}),
             "isScored": forms.CheckboxInput(attrs={"style": "display:none"}),
         }
+
+
+class CreateTrainingSet(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(CreateTrainingSet, self).__init__(*args, **kwargs)
+        games = Game.objects.all()
+
+        for game in games:
+            exportedDataDir = os.path.join(
+                settings.MEDIA_ROOT, "games", game.directoryName, "exportedData"
+            )
+            if os.path.isdir(exportedDataDir) and os.listdir(exportedDataDir):
+                dataFiles = sorted(os.listdir(exportedDataDir))
+                dataFiles.insert(0, "No usar")
+                dataFilesChoices = [(file, file) for file in dataFiles]
+
+                self.fields[game.directoryName] = forms.ChoiceField()
+                self.fields[game.directoryName].widget = forms.Select(
+                    attrs={"class": "form-control"}
+                )
+                self.fields[game.directoryName].choices = dataFilesChoices

@@ -1,10 +1,11 @@
 from django.db import models
+from django.conf import settings
 
 
 class Patient(models.Model):
     name = models.CharField(max_length=30)
     surnames = models.CharField(max_length=70, null=True)
-    nickname = models.CharField(max_length=30, null=True)
+    nickname = models.CharField(max_length=30, null=True, unique=True)
 
     def __str__(self) -> str:
         return self.name + " " + self.surnames if self.surnames else self.name
@@ -36,13 +37,11 @@ class Model(models.Model):
 
 
 def videoUploadPath(instance, filename):
-    videoName = instance.date.strftime("%Y_%m_%d--%H_%M_%S")
-    return "games/" + videoName + "/" + videoName + ".avi"
+    return "games/" + instance.directoryName + "/" + instance.directoryName + ".avi"
 
 
 def jointsUploadPath(instance, filename):
-    jointsName = instance.date.strftime("%Y_%m_%d--%H_%M_%S")
-    return "games/" + jointsName + "/" + jointsName + ".txt"
+    return "games/" + instance.directoryName + "/" + instance.directoryName + ".txt"
 
 
 class Game(models.Model):
@@ -53,11 +52,15 @@ class Game(models.Model):
     video = models.FileField(upload_to=videoUploadPath)
     joints = models.FileField(upload_to=jointsUploadPath)
 
+    @property
+    def directoryName(self):
+        return self.date.strftime(settings.DATETIME_FORMAT)
+
     def __str__(self) -> str:
         activity = self.activity.__str__()
         patient = self.patient.__str__()
-        date = self.date.__str__()
-        return activity + "-" + patient + "-" + date
+        date = self.date.strftime("%Y/%m/%d - %H:%M:%S")
+        return activity + " - " + patient + " - " + date
 
 
 class Posture(models.Model):
@@ -74,4 +77,4 @@ class Posture(models.Model):
     image = models.CharField(max_length=250)
 
     def __str__(self) -> str:
-        return self.image + "-" + self.score.__str__()
+        return self.image + " - " + self.score.__str__()

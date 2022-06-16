@@ -43,23 +43,16 @@ def extractFramesFromVideo(game: Game) -> None:
 def createPostures(game: Game):
     framesDir = os.path.join(os.path.dirname(game.video.path), "frames")
 
-    if os.name == "nt":
-        gameName = game.video.path.split("\\")[-2]
-    elif os.name == "posix":
-        gameName = game.video.path.split("/")[-2]
-
     for frame in sorted(os.listdir(framesDir)):
-        frameImage = "games/" + gameName + "/frames/" + frame
+        frameImage = "games/" + game.directoryName + "/frames/" + frame
         p = Posture(game=game, image=frameImage)
         p.save()
 
 
 def createDataFile(game):
-    gameDate = game.date.strftime("%Y_%m_%d--%H_%M_%S")
-    exportedDataDir = os.path.join(settings.MEDIA_ROOT, "games", gameDate, "exportedData")
-
-    filename = datetime.datetime.now().strftime("%Y_%m_%d--%H_%M_%S") + ".txt"
-    dataFile = os.path.join(exportedDataDir, filename)
+    exportedDataDir = os.path.join(settings.MEDIA_ROOT, "games", game.directoryName, "exportedData")
+    now = datetime.datetime.now().strftime(settings.DATETIME_FORMAT) + ".txt"
+    dataFile = os.path.join(exportedDataDir, now)
 
     os.system(f"mkdir -p {exportedDataDir} && cp {game.joints.path} {dataFile}")
 
@@ -74,11 +67,73 @@ def addScoredPosturesToDataFile(game, dataFile):
         frameNumber = int(posture.image.split("/")[-1].split(".")[0])
         scoredPostures[frameNumber] = posture.score
 
-    with open(dataFile, "r+") as f:
-        frames = f.readlines()
-        f.seek(0)
-        f.write(frames[0].strip() + "; 26 --> [Class]\n")
+        if posture.score is None:
+            scoredPostures[frameNumber] = -1
+
+    with open(dataFile, "r+") as dataFileWithScores:
+        frames = dataFileWithScores.readlines()
+        dataFileWithScores.seek(0)
+        dataFileWithScores.write(frames[0].strip() + "; 26 --> [Class]\n")
         for frame in range(1, len(frames)):
             if frame - 1 in scoredPostures.keys():
-                f.write(frames[frame].strip() + f" {scoredPostures[frame-1]}\n")
-        f.truncate()
+                dataFileWithScores.write(frames[frame].strip() + f" {scoredPostures[frame-1]}\n")
+        dataFileWithScores.truncate()
+
+
+def createTrainingFile(dataFiles):
+    trainingDataDir = os.path.join(settings.MEDIA_ROOT, "datasets")
+    os.system(f"mkdir -p {trainingDataDir}")
+    now = datetime.datetime.now().strftime(settings.DATETIME_FORMAT)
+    filename = os.path.join(settings.MEDIA_ROOT, "datasets", now) + ".arff"
+
+    bodyParts = [
+        "SpineBase",
+        "SpineMid",
+        "Neck",
+        "Head",
+        "ShoulderLeft",
+        "ElbowLeft",
+        "WristLeft",
+        "HandLeft",
+        "ShoulderRight",
+        "ElbowRight",
+        "WristRight",
+        "HandRight",
+        "HipLeft",
+        "KneeLeft",
+        "AnkleLeft",
+        "FootLeft",
+        "HipRight",
+        "KneeRight",
+        "AnkleRight",
+        "FootRight",
+        "SpineShoulder",
+        "HandTipLeft",
+        "ThumbLeft",
+        "HandTipRight",
+        "ThumbRight",
+    ]
+
+    with open(filename, "w+") as trainingFile:
+        trainingFile.write("@relation posturasClasificadas--" + now + "\n\n")
+
+        for bodyPart in bodyParts:
+            trainingFile.write("@attribute " + bodyPart + "X real\n")
+            trainingFile.write("@attribute " + bodyPart + "Y real\n")
+            trainingFile.write("@attribute " + bodyPart + "Z real\n\n")
+
+        trainingFile.write("@attribute class real\n\n")
+        trainingFile.write("@data\n")
+
+        for game, dataFilename in dataFiles.items():
+            if dataFilename == "No usar":
+                continue
+
+            dataFilePath = os.path.join(
+                settings.MEDIA_ROOT, "games", game, "exportedData", dataFilename
+            )
+            with open(dataFilePath, "r") as dataFile:
+                for line in dataFile.readlines()[1:]:
+                    splittedLine = line.split(" ")
+                    lineWithoutFrame = ",".join(splittedLine[1:])
+                    trainingFile.write(lineWithoutFrame)

@@ -163,3 +163,9 @@ MESSAGE_TAGS = {
     messages.WARNING: "alert-warning",
     messages.ERROR: "alert-danger",
 }
+
+# Datetime format used for filenames such as:
+# - Directory, video and jointsFile from game
+# - Exported data file from game
+# - Datasets files
+DATETIME_FORMAT = "%Y_%m_%d--%H_%M_%S"

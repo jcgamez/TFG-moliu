@@ -7,9 +7,11 @@ from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.views import View, generic
 from .models import Posture, Patient, Activity, Game, Model
-from .forms import ImportGame, ClassifyPosture, LoginForm
-from .utils import importGame, addScoredPosturesToDataFile, createDataFile
+from .forms import ImportGame, ClassifyPosture, LoginForm, CreateTrainingSet
+from .utils import importGame, addScoredPosturesToDataFile, createDataFile, createTrainingFile
 import random
+import os
+from django.conf import settings
 
 
 class LoginView(auth_views.LoginView):
@@ -29,10 +31,6 @@ def index(request):
 class PatientsView(LoginRequiredMixin, generic.ListView):
     model = Patient
     template_name = "moliuWeb/patients.html"
-
-    def get_context_data(self):
-        context = super().get_context_data()
-        return context
 
     def get_queryset(self):
         qs = Patient.objects.all().exclude(name="paciente0")
@@ -63,10 +61,6 @@ class ActivitiesView(LoginRequiredMixin, generic.ListView):
     model = Activity
     template_name = "moliuWeb/activities.html"
 
-    def get_context_data(self):
-        context = super().get_context_data()
-        return context
-
     def get_queryset(self):
         qs = Activity.objects.all().exclude(name="actividad0")
         return qs
@@ -74,17 +68,11 @@ class ActivitiesView(LoginRequiredMixin, generic.ListView):
 
 class GamesView(LoginRequiredMixin, generic.ListView):
     model = Game
-    importGameForm = ImportGame
     template_name = "moliuWeb/games.html"
-
-    def get_context_data(self):
-        context = super().get_context_data()
-        context["form"] = self.importGameForm()
-        return context
 
 
 class GameImportView(LoginRequiredMixin, generic.base.TemplateView):
-    template_name: str = "moliuWeb/importGame.html"
+    template_name = "moliuWeb/importGame.html"
     importGameForm = ImportGame
 
     def get_context_data(self):
@@ -167,3 +155,35 @@ class ModelsView(LoginRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         pass
+
+
+class CreateTrainingSetView(LoginRequiredMixin, generic.FormView):
+    template_name = "moliuWeb/createTrainingSet.html"
+    form_class = CreateTrainingSet
+
+    def get(self, request):
+        games = Game.objects.all()
+
+        for game in games:
+            exportedDataDir = os.path.join(
+                settings.MEDIA_ROOT, "games", game.directoryName, "exportedData"
+            )
+            if os.path.isdir(exportedDataDir) and os.listdir(exportedDataDir):
+                break
+        else:
+            messages.error(
+                request, "Al menos debe haber un fichero de datos exportados en el servidor"
+            )
+            return redirect("moliuWeb:models")
+
+        return self.render_to_response(self.get_context_data())
+
+    def post(self, request):
+        createTrainingSetForm = CreateTrainingSet(request.POST)
+
+        if createTrainingSetForm.is_valid():
+            createTrainingFile(createTrainingSetForm.cleaned_data)
+        else:
+            print(createTrainingSetForm.errors)
+
+        return HttpResponseRedirect(reverse("moliuWeb:models"))
