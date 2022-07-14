@@ -66,6 +66,11 @@ class ActivitiesView(LoginRequiredMixin, generic.ListView):
         return qs
 
 
+@login_required
+def addActivity(request):
+    return render(request, "moliuWeb/addActivity.html")
+
+
 class GamesView(LoginRequiredMixin, generic.ListView):
     model = Game
     template_name = "moliuWeb/games.html"

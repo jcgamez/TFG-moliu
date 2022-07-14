@@ -12,6 +12,7 @@ urlpatterns = [
     path("patients/update/<int:pk>", views.PatientUpdateView.as_view(), name="updatePatient"),
     path("patients/delete/<int:pk>", views.PatientDeleteView.as_view(), name="deletePatient"),
     path("activities", views.ActivitiesView.as_view(), name="activities"),
+    # path("activities/add/", views.addActivity, name="addActivity"),
     path("games", views.GamesView.as_view(), name="games"),
     path("games/import/", views.GameImportView.as_view(), name="importGame"),
     path("games/export/<int:gameId>", views.exportGameData, name="exportGameData"),

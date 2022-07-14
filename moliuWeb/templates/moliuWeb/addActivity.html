@@ -1,0 +1,298 @@
+{% extends 'moliuWeb/base.html' %}
+{% load static %}
+
+{% block title %} Moliu | Añadir actividad {% endblock %}
+
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+      <div class="row mb-2">
+      <div class="col-sm-6">
+          <h1>Añadir actividad</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:index' %}">Moliu</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:activities' %}">Actividades</a></li>
+        <li class="breadcrumb-item active">Añadir actividad</li>
+        </ol>
+      </div>
+      </div>
+  </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="card card-primary card-outline">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="name">Nombre</label>
+              <input type="text" class="form-control" id="name" placeholder="Nombre de la actividad">
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="description">Descripción</label>
+              <input type="text" class="form-control" id="description" placeholder="Descripción de la actividad">
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+    </div>
+
+    <div class="card card-primary card-outline">
+      <div class="card-body">
+        <div class="row">
+
+          <div class="col-sm-3 form-group">
+            <label for="color">Color</label>
+            <div class="input-group my-colorpicker2 colorpicker-element" data-colorpicker-id="2">
+              <input type="text" class="form-control" id="color" data-original-title="" title="">
+              <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-square" style="color: rgb(255, 0, 0);"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3 form-group">
+            <label for="shape">Forma</label>
+            <input type="text" class="form-control" id="shape" placeholder="Forma">
+          </div>
+
+          <div class="col-sm-3 form-group">
+            <label for="shape">Fondo</label>
+            <input type="text" class="form-control" id="shape" placeholder="Forma">
+          </div>
+
+          <div class="col-sm-3 form-group">
+            <label for="shape">Música</label>
+            <input type="text" class="form-control" id="shape" placeholder="Forma">
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-7">
+        <div class="card card-solid" id="background" style="height: 600px;">
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="card card-primary" style="height: 600px;">
+          <div class="card-header">Puntos</div>
+          <div class="card-body table-responsive p-0">
+            <table class="table table-head-fixed table-bordered table-striped text-nowrap">
+              <thead>
+                <tr>
+                  <th style="width: 10px">#</th>
+                  <th>Coordenadas</th>
+                  <th>Duración</th>
+                  <th style="width: 40px">Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1.</td>
+                  <td>Update software</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-danger">55%</span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Clean database</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar bg-warning" style="width: 70%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-warning">70%</span></td>
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>Cron job running</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-primary" style="width: 30%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-primary">30%</span></td>
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>Fix and squish bugs</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-success" style="width: 90%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-success">90%</span></td>
+                </tr>
+                <tr>
+                  <td>1.</td>
+                  <td>Update software</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-danger">55%</span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Clean database</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar bg-warning" style="width: 70%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-warning">70%</span></td>
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>Cron job running</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-primary" style="width: 30%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-primary">30%</span></td>
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>Fix and squish bugs</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-success" style="width: 90%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-success">90%</span></td>
+                </tr>
+                <tr>
+                  <td>1.</td>
+                  <td>Update software</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-danger">55%</span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Clean database</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar bg-warning" style="width: 70%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-warning">70%</span></td>
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>Cron job running</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-primary" style="width: 30%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-primary">30%</span></td>
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>Fix and squish bugs</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-success" style="width: 90%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-success">90%</span></td>
+                </tr>
+                <tr>
+                  <td>1.</td>
+                  <td>Update software</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-danger">55%</span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Clean database</td>
+                  <td>
+                    <div class="progress progress-xs">
+                      <div class="progress-bar bg-warning" style="width: 70%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-warning">70%</span></td>
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>Cron job running</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-primary" style="width: 30%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-primary">30%</span></td>
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>Fix and squish bugs</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar bg-success" style="width: 90%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-success">90%</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+{{ block.super }}
+<script src="{% static 'moliuWeb/js/addActivity.js' %}"></script>
+<script src="{% static 'moliuWeb/js/bootstrap-colorpicker.min.js' %}"></script>
+<script>
+    $(function () {
+        $('#activities').addClass('active');
+    });
+    //Colorpicker
+    $('.my-colorpicker1').colorpicker()
+    //color picker with addon
+    $('.my-colorpicker2').colorpicker()
+
+    $('.my-colorpicker2').on('colorpickerChange', function(event) {
+      $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+    })
+</script>
+
+{% endblock %}
