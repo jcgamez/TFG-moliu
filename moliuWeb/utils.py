@@ -1,3 +1,4 @@
+from math import sqrt, acos, degrees
 from django.conf import settings
 from .models import Patient, Activity, Game, Posture
 import os
@@ -122,6 +123,18 @@ def createTrainingFile(dataFiles):
             trainingFile.write("@attribute " + bodyPart + "Y real\n")
             trainingFile.write("@attribute " + bodyPart + "Z real\n\n")
 
+        for part1 in bodyParts:
+            if part1 == "SpineBase":
+                continue
+
+            for part2 in bodyParts:
+                if part2 in [part1, "SpineBase"]:
+                    continue
+
+                trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]XY real\n")
+                trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]XZ real\n")
+                trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]YZ real\n\n")
+
         trainingFile.write("@attribute class real\n\n")
         trainingFile.write("@data\n")
 
@@ -134,6 +147,87 @@ def createTrainingFile(dataFiles):
             )
             with open(dataFilePath, "r") as dataFile:
                 for line in dataFile.readlines()[1:]:
-                    splittedLine = line.split(" ")
-                    lineWithoutFrame = ",".join(splittedLine[1:])
-                    trainingFile.write(lineWithoutFrame)
+                    attributes = line.split(" ")
+                    angles = obtainAngles(bodyParts, attributes[1:])
+                    addAnglesToAttributes(attributes, angles)
+                    attributesWithoutFrame = ",".join(attributes[1:])
+                    trainingFile.write(attributesWithoutFrame)
+
+
+def obtainAngles(bodyParts, coordinatesInSpace):
+    joints = {}
+    angles = {}
+    i = 0
+
+    for bodyPart in bodyParts:
+        joints[bodyPart] = {
+            "X": float(coordinatesInSpace[i]),
+            "Y": float(coordinatesInSpace[i + 1]),
+            "Z": float(coordinatesInSpace[i + 2]),
+        }
+        i += 3
+
+    for part1 in bodyParts:
+        if part1 == "SpineBase":
+            continue
+
+        for part2 in bodyParts:
+            if part2 in [part1, "SpineBase"]:
+                continue
+
+            anglesByPlane = getAnglesByPlane(joints[part1], joints[part2], joints["SpineBase"])
+            angles[part1 + "-" + part2] = anglesByPlane
+
+    return angles
+
+
+def getAnglesByPlane(part1, part2, spineBase):
+    anglesByPlane = {
+        "XY": 0,
+        "XZ": 0,
+        "YZ": 0,
+    }
+
+    # XY Plane
+    sideA = sqrt((part1["X"] - part2["X"]) ** 2 + (part1["Y"] - part2["Y"]) ** 2)
+    sideB = sqrt((part1["X"] - spineBase["X"]) ** 2 + (part1["Y"] - spineBase["Y"]) ** 2)
+    sideC = sqrt((part2["X"] - spineBase["X"]) ** 2 + (part2["Y"] - spineBase["Y"]) ** 2)
+
+    if sideA != 0 and sideB != 0 and sideC != 0:
+        cosine = -(sideA**2 - sideB**2 - sideC**2) / (2 * sideB * sideC)
+        angleXY = degrees(acos(round(cosine, 12)))
+        anglesByPlane["XY"] = round(angleXY, 4)
+
+    # XZ Plane
+    sideA = sqrt((part1["X"] - part2["X"]) ** 2 + (part1["Z"] - part2["Z"]) ** 2)
+    sideB = sqrt((part1["X"] - spineBase["X"]) ** 2 + (part1["Z"] - spineBase["Z"]) ** 2)
+    sideC = sqrt((part2["X"] - spineBase["X"]) ** 2 + (part2["Z"] - spineBase["Z"]) ** 2)
+
+    if sideA != 0 and sideB != 0 and sideC != 0:
+        cosine = -(sideA**2 - sideB**2 - sideC**2) / (2 * sideB * sideC)
+        angleXZ = degrees(acos(round(cosine, 12)))
+        anglesByPlane["XZ"] = round(angleXZ, 4)
+
+    # YZ Plane
+    sideA = sqrt((part1["Y"] - part2["Y"]) ** 2 + (part1["Z"] - part2["Z"]) ** 2)
+    sideB = sqrt((part1["Y"] - spineBase["Y"]) ** 2 + (part1["Z"] - spineBase["Z"]) ** 2)
+    sideC = sqrt((part2["Y"] - spineBase["Y"]) ** 2 + (part2["Z"] - spineBase["Z"]) ** 2)
+
+    if sideA != 0 and sideB != 0 and sideC != 0:
+        cosine = -(sideA**2 - sideB**2 - sideC**2) / (2 * sideB * sideC)
+        angleYZ = degrees(acos(round(cosine, 12)))
+        anglesByPlane["YZ"] = round(angleYZ, 4)
+
+    return anglesByPlane
+
+
+def addAnglesToAttributes(attributes, angles):
+    classValue = attributes[-1]
+    del attributes[-1]
+
+    for anglesByPart in angles.values():
+        attributes.append(str(anglesByPart["XY"]))
+        attributes.append(str(anglesByPart["XZ"]))
+        attributes.append(str(anglesByPart["YZ"]))
+
+    attributes.append(classValue)
