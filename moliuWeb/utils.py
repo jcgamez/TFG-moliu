@@ -135,7 +135,14 @@ def createTrainingFile(dataFiles):
                 trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]XZ real\n")
                 trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]YZ real\n\n")
 
-        trainingFile.write("@attribute class real\n\n")
+        for i in range(0, len(bodyParts) - 1):
+            for j in range(i + 1, len(bodyParts)):
+                trainingFile.write(
+                    "@attribute Distance[" + bodyParts[i] + "-" + bodyParts[j] + "] real\n"
+                )
+            trainingFile.write("\n")
+
+        trainingFile.write("@attribute class {-1, 0, 25, 50, 75, 100}\n\n")
         trainingFile.write("@data\n")
 
         for game, dataFilename in dataFiles.items():
@@ -148,10 +155,18 @@ def createTrainingFile(dataFiles):
             with open(dataFilePath, "r") as dataFile:
                 for line in dataFile.readlines()[1:]:
                     attributes = line.split(" ")
+                    preprocessAttributes(attributes)
                     angles = obtainAngles(bodyParts, attributes[1:])
+                    distances = obtainDistances(bodyParts, attributes[1:])
                     addAnglesToAttributes(attributes, angles)
+                    addDistancesToAttributes(attributes, distances)
                     attributesWithoutFrame = ",".join(attributes[1:])
                     trainingFile.write(attributesWithoutFrame)
+
+
+def preprocessAttributes(attributes):
+    for i in range(3, len(attributes), 3):
+        attributes[i] = str(round(float(attributes[i]), 2))
 
 
 def obtainAngles(bodyParts, coordinatesInSpace):
@@ -196,7 +211,7 @@ def getAnglesByPlane(part1, part2, spineBase):
     if sideA != 0 and sideB != 0 and sideC != 0:
         cosine = -(sideA**2 - sideB**2 - sideC**2) / (2 * sideB * sideC)
         angleXY = degrees(acos(round(cosine, 12)))
-        anglesByPlane["XY"] = round(angleXY, 4)
+        anglesByPlane["XY"] = int(angleXY)
 
     # XZ Plane
     sideA = sqrt((part1["X"] - part2["X"]) ** 2 + (part1["Z"] - part2["Z"]) ** 2)
@@ -206,7 +221,7 @@ def getAnglesByPlane(part1, part2, spineBase):
     if sideA != 0 and sideB != 0 and sideC != 0:
         cosine = -(sideA**2 - sideB**2 - sideC**2) / (2 * sideB * sideC)
         angleXZ = degrees(acos(round(cosine, 12)))
-        anglesByPlane["XZ"] = round(angleXZ, 4)
+        anglesByPlane["XZ"] = int(angleXZ)
 
     # YZ Plane
     sideA = sqrt((part1["Y"] - part2["Y"]) ** 2 + (part1["Z"] - part2["Z"]) ** 2)
@@ -216,7 +231,7 @@ def getAnglesByPlane(part1, part2, spineBase):
     if sideA != 0 and sideB != 0 and sideC != 0:
         cosine = -(sideA**2 - sideB**2 - sideC**2) / (2 * sideB * sideC)
         angleYZ = degrees(acos(round(cosine, 12)))
-        anglesByPlane["YZ"] = round(angleYZ, 4)
+        anglesByPlane["YZ"] = int(angleYZ)
 
     return anglesByPlane
 
@@ -229,5 +244,50 @@ def addAnglesToAttributes(attributes, angles):
         attributes.append(str(anglesByPart["XY"]))
         attributes.append(str(anglesByPart["XZ"]))
         attributes.append(str(anglesByPart["YZ"]))
+
+    attributes.append(classValue)
+
+
+def obtainDistances(bodyParts, coordinatesInSpace):
+    joints = {}
+    distances = {}
+    i = 0
+
+    for bodyPart in bodyParts:
+        joints[bodyPart] = {
+            "X": float(coordinatesInSpace[i]),
+            "Y": float(coordinatesInSpace[i + 1]),
+            "Z": float(coordinatesInSpace[i + 2]),
+        }
+        i += 3
+
+    high = abs(((joints["FootLeft"]["Y"] + joints["FootRight"]["Y"]) / 2) - joints["Head"]["Y"])
+
+    for i in range(0, len(bodyParts) - 1):
+        for j in range(i + 1, len(bodyParts)):
+            part1 = bodyParts[i]
+            part2 = bodyParts[j]
+            distance = getDistance(joints[part1], joints[part2], high)
+            distances[part1 + "-" + part2] = distance
+
+    return distances
+
+
+def getDistance(part1, part2, high):
+    distance = sqrt(
+        (part1["X"] - part2["X"]) ** 2
+        + (part1["Y"] - part2["Y"]) ** 2
+        + (part1["Z"] - part2["Z"]) ** 2
+    )
+
+    return round(distance / high, 2)
+
+
+def addDistancesToAttributes(attributes, distances):
+    classValue = attributes[-1]
+    del attributes[-1]
+
+    for distance in distances.values():
+        attributes.append(str(distance))
 
     attributes.append(classValue)
