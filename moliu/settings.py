@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "moliuWeb.apps.MoliuwebConfig",
+    "moliuAPI.apps.MoliuapiConfig",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
