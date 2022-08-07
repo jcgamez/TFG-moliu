@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.views import View, generic
 from .models import Posture, Patient, Activity, Game, Model
-from .forms import ImportGame, ClassifyPosture, LoginForm, CreateTrainingSet
+from .forms import ImportGame, ClassifyPosture, LoginForm, CreateTrainingSet, AddActivity
 from .utils import importGame, addScoredPosturesToDataFile, createDataFile, createTrainingFile
 import random
 import os
@@ -66,9 +66,17 @@ class ActivitiesView(LoginRequiredMixin, generic.ListView):
         return qs
 
 
-@login_required
-def addActivity(request):
-    return render(request, "moliuWeb/addActivity.html")
+class ActivityCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Activity
+    template_name = "moliuWeb/addActivity.html"
+    form_class = AddActivity
+    success_url = reverse_lazy("moliuWeb:activities")
+
+
+class ActivityDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Activity
+    template_name = "moliuWeb/deleteActivity.html"
+    success_url = reverse_lazy("moliuWeb:activities")
 
 
 class GamesView(LoginRequiredMixin, generic.ListView):

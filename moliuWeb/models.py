@@ -18,6 +18,8 @@ def getSentinelPatient():
 class Activity(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
+    background = models.CharField(max_length=255, null=True, blank=True)
+    points = models.JSONField(null=True, blank=True)
 
     def __str__(self) -> str:
         return self.name

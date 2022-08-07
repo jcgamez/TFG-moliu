@@ -50,6 +50,11 @@
               <tr>
                 <td> {{ activity.name }} </td>
                 <td> {{ activity.description }} </td>
+                <td>
+                  <a href="{% url 'moliuWeb:deleteActivity' activity.id %}">
+                    <button type="button" class="btn bg-danger">Eliminar actividad</button>
+                  </a>
+                </td>
               </tr>
               {% endfor %}
               </tbody>

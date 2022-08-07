@@ -1,5 +1,5 @@
 from django import forms
-from .models import Game, Posture
+from .models import Activity, Game, Posture
 from django.contrib.auth import forms as authForms
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -24,6 +24,24 @@ class LoginForm(authForms.AuthenticationForm):
             }
         ),
     )
+
+
+class AddActivity(forms.ModelForm):
+    class Meta:
+        model = Activity
+        fields = ["name", "description", "background", "points"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nombre de la actividad"}
+            ),
+            "description": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descripción de la actividad"}
+            ),
+            "background": forms.TextInput(
+                attrs={"class": "form-control", "style": "display: none;"}
+            ),
+            "points": forms.Textarea(attrs={"class": "form-control", "style": "display: none;"}),
+        }
 
 
 class ImportGame(forms.ModelForm):

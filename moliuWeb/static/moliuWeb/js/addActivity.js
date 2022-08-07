@@ -22,6 +22,7 @@ const backgroundImage = document.getElementById("background");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const pointsTable = document.getElementById("points");
+const addActivityForm = document.getElementsByTagName("form")[0];
 
 
 // MAIN CODE //
@@ -86,16 +87,22 @@ function deletePoint(row) {
     let numberOfRows = rows.length;
     let rowIndex = row.rowIndex;
 
-    Points.splice(rowIndex-1, 1);
-
-    for(let i=rowIndex+1; i<numberOfRows; i++)
+    for(let i=rowIndex+1; i<numberOfRows; i++) {
         rows[i].firstChild.innerHTML -= 1;
+        Points[i-1].order -= 1;
+    }
 
-    pointsTable.deleteRow(rowIndex);
+    Points.splice(rowIndex-1, 1);
     pointsNumber--;
+    pointsTable.deleteRow(rowIndex);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for(let i=0; i<Points.length; i++)
         drawPoint(Points[i].x, Points[i].y);
 }
+
+addActivityForm.addEventListener("submit", function(e) {
+    const pointsJSONInput = document.getElementById("id_points");
+    pointsJSONInput.value = JSON.stringify(Points);
+});
