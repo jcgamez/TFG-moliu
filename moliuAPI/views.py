@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.views import APIView
 
 from moliuWeb.models import Patient, Activity
@@ -11,6 +12,13 @@ class Patients(APIView):
 
         patients_serializer = PatientSerializer(patients, many=True)
         return JsonResponse(patients_serializer.data, safe=False)
+
+    def post(self, request, format=None):
+        patientSerializer = PatientSerializer(data=request.data)
+        if patientSerializer.is_valid():
+            patientSerializer.save()
+            return JsonResponse(patientSerializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(patientSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class Activities(APIView):
