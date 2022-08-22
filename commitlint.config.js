@@ -1,3 +1,10 @@
+/*
+* Commitlint configuration file:
+*
+* The commit message must satisfy these rules to complete the commit process
+* The rules have been specified according to conventional commits standard
+*/
+
 module.exports = {
     extends: ["@commitlint/config-conventional"],
     rules: {

@@ -5,10 +5,10 @@ from moliuWeb.models import Patient, Activity
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Patient
-        fields = "__all__"
+        exclude = ["id"]
 
 
 class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Activity
-        fields = "__all__"
+        exclude = ["id"]
