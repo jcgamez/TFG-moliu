@@ -2,4 +2,6 @@
 *.pyc*
 /media/
 /static/
+/docs/
+.vscode/
 .env

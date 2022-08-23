@@ -1,20 +1,20 @@
-'use strict';
+"use strict";
 
 
 // VARIABLES DECLARATION //
 class Point {
-    constructor(x, y, duration, order) {
+    constructor(x, y, duration, number) {
         this.x = x;
         this.y = y;
         this.duration = duration;
-        this.order = order;
+        this.number = number;
     }
 }
 
 const Points = []; // Same as new Array()
 const pointSize = 10;
-let pointsNumber = 0;
-let pointDuration = 5;
+let numberOfPoints = 0;
+let defaultDuration = 5;
 let isBackgroundSelected = false;
 let isShapeSelected = false;
 
@@ -37,7 +37,7 @@ canvas.height = canvas.offsetHeight;
 
 canvas.addEventListener("click", function(e) {
     const [x, y] = getPosition(e);
-    pointsNumber++;
+    numberOfPoints++;
 
     drawPoint(x, y);
     addPoint(x, y);
@@ -59,27 +59,116 @@ function drawPoint(x,y) {
     ctx.fill();
 }
 
+function drawPoints() {
+    for(let i=0; i<Points.length; i++)
+        drawPoint(Points[i].x, Points[i].y);
+}
+
 function addPoint(x, y) {
-    let newRow = pointsTable.insertRow();
+    Points.push(new Point(x, y, defaultDuration, numberOfPoints));
+    addPointToTable(x, y);
+}
+
+function addPointToTable(x, y, duration=defaultDuration, number=numberOfPoints) {
+    let newRow = pointsTable.insertRow(number);
 
     let pointNumberCell = newRow.insertCell(0);
     let coordinatesCell = newRow.insertCell(1);
     let pointDurationCell = newRow.insertCell(2);
     let deletePointCell = newRow.insertCell(3);
 
-    Points.push(new Point(x, y, pointDuration, pointsNumber));
-
-    pointNumberCell.innerHTML = pointsNumber;
+    pointNumberCell.innerHTML = number;
     pointNumberCell.setAttribute("contenteditable", "true");
+    addInteractiveClasses(pointNumberCell);
+    // To not call the function during addEventListener, bind() method has to be used
+    pointNumberCell.addEventListener("blur", changePointNumber.bind(this, pointNumberCell, newRow));
 
     coordinatesCell.innerHTML = Math.round(x) + ", " + Math.round(y);
 
-    pointDurationCell.innerHTML = pointDuration;
+    pointDurationCell.innerHTML = duration;
     pointDurationCell.setAttribute("contenteditable", "true");
+    addInteractiveClasses(pointDurationCell);
+    pointDurationCell.addEventListener("blur", changeDuration.bind(this, pointDurationCell, newRow));
 
     deletePointCell.innerHTML = "<span style=\"cursor: pointer\" class=\"badge bg-danger deletePoint\">Eliminar</span>";
-    // To not call the function during addEventListener, bind() method has to be used
     deletePointCell.firstChild.addEventListener("click", deletePoint.bind(this, newRow));
+}
+
+function changePointNumber(numberCell, row) {
+    let oldPoint = Points[row.rowIndex-1];
+    let oldNumber = oldPoint.number;
+    let newNumber = Number(numberCell.innerText);
+    let newPoint = new Point(oldPoint.x, oldPoint.y, oldPoint.duration, newNumber);
+
+    let rows = pointsTable.rows;
+    let numberOfRows = rows.length;
+
+    if(newNumber === oldNumber)
+        return;
+
+    if(isNaN(newNumber) || newNumber <= 0) {
+        window.alert("El valor debe ser un número entero mayor que 0.");
+        numberCell.innerText = oldNumber;
+        return;
+    }
+
+    if(newNumber > numberOfPoints)
+        newNumber = numberOfPoints;
+
+    // Delete row with oldNumber
+    deletePoint(row);
+
+    // Add row to table at position newNumber
+    addPointToTable(oldPoint.x, oldPoint.y, oldPoint.duration, newNumber);
+    numberOfPoints++;
+
+    // Add point to array at position newNumber
+    Points.splice(newNumber-1, 0, newPoint);
+
+    // Update following points in table and array
+    for(let i=newNumber+1; i<numberOfRows; i++) {
+        rows[i].firstChild.innerHTML = Number(rows[i].firstChild.innerText) + 1;
+        Points[i-1].number += 1;
+    }
+
+    drawPoints();
+}
+
+function changeDuration(durationCell, row) {
+    let newDuration = Number(durationCell.innerText.trim());
+
+    if(isNaN(newDuration) || newDuration <= 0) {
+        window.alert("La duración debe ser un número entero mayor que 0.");
+        durationCell.innerText = Points[row.rowIndex-1].duration;
+    } else {
+        Points[row.rowIndex-1].duration = newDuration;
+        durationCell.innerText = newDuration;
+    }
+}
+
+function addInteractiveClasses(element) {
+    ["mouseover","touchstart"].forEach( evt =>
+        element.addEventListener(evt, function() {
+            this.classList.add("bg-primary");
+        })
+    );
+
+    element.addEventListener("focusin", function() {
+        this.classList.remove("bg-primary");
+        this.classList.add("bg-lightblue");
+    });
+
+    ["mouseout", "touchend", "load"].forEach( evt =>
+        element.addEventListener(evt, function() {
+            this.classList.remove("bg-primary");
+        })
+    );
+
+    ["focusout", "load"].forEach( evt =>
+        element.addEventListener(evt, function() {
+            this.classList.remove("bg-lightblue");
+        })
+    );
 }
 
 function deletePoint(row) {
@@ -89,17 +178,16 @@ function deletePoint(row) {
 
     for(let i=rowIndex+1; i<numberOfRows; i++) {
         rows[i].firstChild.innerHTML -= 1;
-        Points[i-1].order -= 1;
+        Points[i-1].number -= 1;
     }
 
     Points.splice(rowIndex-1, 1);
-    pointsNumber--;
+    numberOfPoints--;
     pointsTable.deleteRow(rowIndex);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    for(let i=0; i<Points.length; i++)
-        drawPoint(Points[i].x, Points[i].y);
+    drawPoints();
 }
 
 addActivityForm.addEventListener("submit", function(e) {
