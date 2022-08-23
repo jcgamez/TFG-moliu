@@ -1,3 +1,15 @@
+# pre-commit configuration file and specification of the hooks it uses
+#
+# HOOKS:
+# - commitlint: Verify that commit message meets rules
+#               specified in commitlint.config.js file
+# - trailing-whitespace: Delete trailing whitespaces
+# - black: Python code formatter
+# - flake8: Check code base against coding style (PEP8),
+#           programming errors (like “library imported but unused” and “Undefined name”)
+#           and to check cyclomatic complexity
+# - mypy: Static type checker for Python.
+
 default_stages: [commit]
 
 repos:

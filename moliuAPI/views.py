@@ -8,10 +8,13 @@ from .serializers import PatientSerializer, ActivitySerializer
 
 class Patients(APIView):
     def get(self, request, format=None):
-        patients = Patient.objects.all()
+        patients = Patient.objects.all().exclude(name="paciente0")
 
-        patients_serializer = PatientSerializer(patients, many=True)
-        return JsonResponse(patients_serializer.data, safe=False)
+        patientsSerializer = PatientSerializer(patients, many=True)
+
+        processedData = {"players": patientsSerializer.data}
+
+        return JsonResponse(processedData, safe=True)
 
     def post(self, request, format=None):
         patientSerializer = PatientSerializer(data=request.data)
@@ -23,7 +26,10 @@ class Patients(APIView):
 
 class Activities(APIView):
     def get(self, request, format=None):
-        patients = Activity.objects.all().exclude(name="actividad0")
+        activities = Activity.objects.all().exclude(name="actividad0")
 
-        patients_serializer = ActivitySerializer(patients, many=True)
-        return JsonResponse(patients_serializer.data, safe=False)
+        activitiesSerializer = ActivitySerializer(activities, many=True)
+
+        processedData = {"activities": activitiesSerializer.data}
+
+        return JsonResponse(processedData, safe=True)
