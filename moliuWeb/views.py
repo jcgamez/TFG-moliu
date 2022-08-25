@@ -6,12 +6,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.views import View, generic
+from django.core.files import File
+from django.conf import settings
+from pathlib import Path
 from .models import Posture, Patient, Activity, Game, Model
 from .forms import ImportGame, ClassifyPosture, LoginForm, CreateTrainingSet, AddActivity
 from .utils import importGame, addScoredPosturesToDataFile, createDataFile, createTrainingFile
 import random
 import os
-from django.conf import settings
 
 
 class LoginView(auth_views.LoginView):
@@ -71,6 +73,44 @@ class ActivityCreateView(LoginRequiredMixin, generic.CreateView):
     template_name = "moliuWeb/addActivity.html"
     form_class = AddActivity
     success_url = reverse_lazy("moliuWeb:activities")
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        backgroundDir = os.path.join(settings.BASE_DIR, "media/activities/backgrounds")
+        shapeDir = os.path.join(settings.BASE_DIR, "media/activities/shapes")
+        musicDir = os.path.join(settings.BASE_DIR, "media/activities/music")
+
+        os.system(f"mkdir -p {backgroundDir}")
+        os.system(f"mkdir -p {shapeDir}")
+        os.system(f"mkdir -p {musicDir}")
+
+        context["shapes"] = sorted(os.listdir(shapeDir))
+        context["backgrounds"] = sorted(os.listdir(backgroundDir))
+        context["music"] = sorted(os.listdir(musicDir))
+
+        return context
+
+    def post(self, request):
+        addActivityForm = self.form_class(request.POST, request.FILES)
+
+        if addActivityForm.is_valid():
+            cleanedData = addActivityForm.cleaned_data
+            background = cleanedData["background"][1:]
+            backgroundPath = Path(os.path.join(settings.BASE_DIR, background))
+
+            with backgroundPath.open(mode="rb") as f:
+                activity = Activity(
+                    name=cleanedData["name"],
+                    description=cleanedData["description"],
+                    background=File(f, name=backgroundPath.name),
+                    points=cleanedData["points"],
+                )
+                activity.save()
+
+            return HttpResponseRedirect(reverse("moliuWeb:activities"))
+        else:
+            context = {"form": addActivityForm}
+            return render(request, self.template_name, context=context)
 
 
 class ActivityDeleteView(LoginRequiredMixin, generic.DeleteView):

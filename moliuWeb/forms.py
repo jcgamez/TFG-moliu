@@ -27,18 +27,23 @@ class LoginForm(authForms.AuthenticationForm):
 
 
 class AddActivity(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(AddActivity, self).__init__(*args, **kwargs)
+
+        self.fields["background"] = forms.CharField(max_length=255)
+        self.fields["background"].widget = forms.TextInput(
+            attrs={"class": "form-control", "style": "display: none;"}
+        )
+
     class Meta:
         model = Activity
-        fields = ["name", "description", "background", "points"]
+        fields = ["name", "description", "points"]
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Nombre de la actividad"}
             ),
             "description": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Descripción de la actividad"}
-            ),
-            "background": forms.TextInput(
-                attrs={"class": "form-control", "style": "display: none;"}
             ),
             "points": forms.Textarea(attrs={"class": "form-control", "style": "display: none;"}),
         }

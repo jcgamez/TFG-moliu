@@ -1,6 +1,13 @@
 {% extends 'moliuWeb/base.html' %}
 {% load static %}
 
+{% block stylesheets %}
+
+<link href="{% static 'moliuWeb/css/styles.css' %}" rel="stylesheet">
+{{ block.super }}
+
+{% endblock %}
+
 {% block title %} Moliu | Añadir actividad {% endblock %}
 
 {% block content %}
@@ -27,6 +34,7 @@
   <div class="container-fluid">
     <form method="POST">
       {% csrf_token %}
+      {{ form.errors }}
       <div class="card card-primary card-outline">
         <div class="card-body">
           <div class="row">
@@ -44,7 +52,7 @@
       </div>
 
       <div class="card card-primary card-outline" id="prueba">
-        <div class="card-body">
+        <div class="card-header">
           <div class="row">
             <div class="col-sm-3">
               <label for="shape">Forma</label>
@@ -53,11 +61,10 @@
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Acción</button>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="#">Añadir forma</a>
-                      <a class="dropdown-item" href="#">Seleccionar forma</a>
+                      <a id="selectShape" class="dropdown-item" href="#">Seleccionar forma</a>
                     </div>
                   </div>
-                <!-- /btn-group -->
-                <input type="text" disabled class="form-control" id="shape" placeholder="Forma">
+                <input type="text" disabled class="form-control" id="selectedShape" placeholder="Forma">
               </div>
             </div>
 
@@ -68,11 +75,11 @@
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Acción</button>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="#">Añadir fondo</a>
-                      <a class="dropdown-item" href="#">Seleccionar fondo</a>
+                      <a id="selectBackground" class="dropdown-item" href="#">Seleccionar fondo</a>
                     </div>
                   </div>
                 <!-- /btn-group -->
-                <input type="text" disabled class="form-control" id="shape" placeholder="Fondo">
+                <input type="text" disabled class="form-control" id="selectedBackground" placeholder="Fondo">
               </div>
             </div>
 
@@ -83,11 +90,11 @@
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Acción</button>
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="#">Añadir música</a>
-                      <a class="dropdown-item" href="#">Seleccionar música</a>
+                      <a id="selectMusic" class="dropdown-item" href="#">Seleccionar música</a>
                     </div>
                   </div>
                 <!-- /btn-group -->
-                <input type="text" disabled class="form-control" id="shape" placeholder="Música">
+                <input type="text" disabled class="form-control" id="selectedMusic" placeholder="Música">
               </div>
             </div>
 
@@ -96,11 +103,15 @@
               <input type="text" class="form-control" id="shape" placeholder="Forma">
             </div> -->
 
-            <div class="col-sm-3 align-self-end">
-              <button type="submit" class="btn btn-success">Añadir actividad</button>
-              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#staticBackdrop">Ayuda</button>
-            </div>
-
+              <div class="col-sm-3 align-self-end">
+                <div class="card-tools">
+                  <button id="showItems" type="button" class="btn btn-danger" data-card-widget="collapse" style="display: none;">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <button type="submit" id="sendForm" class="btn btn-success">Añadir actividad</button>
+                  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#staticBackdrop">Ayuda</button>
+                </div>
+              </div>
 
             <!-- Modal -->
             <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -125,6 +136,47 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="card-body" style="display: none;">
+          <div id="shapes" class="items-list clearfix">
+            {% for shape in shapes %}
+            <div class="col-md-2">
+              <button class="item" type="button" onclick="changeShape('/media/activities/shapes/{{ shape }}')">
+                <img class="shape-item mb-2" src="/media/activities/shapes/{{ shape }}" alt="Shape Image">
+                <br />
+                {{ shape|capfirst }}
+              </button>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div id="backgrounds" class="items-list clearfix">
+            {% for background in backgrounds %}
+            <div class="col-md-2">
+              <button class="item" type="button" onclick="changeBackground('/media/activities/backgrounds/{{ background }}')">
+                <img class="background-item mb-2" src="/media/activities/backgrounds/{{ background }}" alt="Background Image">
+                <br />
+                {{ background|capfirst }}
+              </button>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div id="music" class="items-list clearfix">
+            {% for song in music %}
+            <div class="col-md-2">
+              <button class="item mb-1" type="button" onclick="changeMusic()">
+                <img class="music-item mb-2" src="{% static 'moliuWeb/img/quaver.png' %}" alt="Quaver Image">
+                <br />
+                {{ song|capfirst }}
+              </button>
+              <audio controls style="width: 80%;">
+                <source src="/media/activities/music/{{ song }}" type="audio/mp3" />
+                Tu navegador no soporta este reproductor de audio.
+              </audio>
+            </div>
+            {% endfor %}
           </div>
         </div>
       </div>
@@ -175,6 +227,26 @@
 <script>
     $(function () {
         $('#activities').addClass('active');
+
+        $("#id_points").on("invalid", function(event) {
+          $(document).Toasts('create', {
+            class: "bg-danger",
+            title: 'Error: No hay puntos',
+            autohide: true,
+            delay: 3000,
+            body: 'Debe agregar al menos un punto a la actividad.'
+          });
+        });
+
+        $("#id_background").on("invalid", function(event) {
+          $(document).Toasts('create', {
+            class: "bg-danger",
+            title: 'Error: Falta fondo',
+            autohide: true,
+            delay: 3000,
+            body: 'Debe seleccionar el fondo de la actividad.'
+          });
+        });
     });
     //Colorpicker
     // $('.my-colorpicker1').colorpicker()

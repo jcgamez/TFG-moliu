@@ -17,12 +17,27 @@ let numberOfPoints = 0;
 let defaultDuration = 5;
 let isBackgroundSelected = false;
 let isShapeSelected = false;
+let isShowingItems = true;
 
 const backgroundImage = document.getElementById("background");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const pointsTable = document.getElementById("points");
 const addActivityForm = document.getElementsByTagName("form")[0];
+const sendFormButton = document.getElementById("sendForm");
+const selectBackgroundButton = document.getElementById("selectBackground");
+const selectShapeButton = document.getElementById("selectShape");
+const selectMusicButton = document.getElementById("selectMusic");
+const showItemsButton = document.getElementById("showItems");
+const shapesDiv = document.getElementById("shapes");
+const backgroundsDiv = document.getElementById("backgrounds");
+const musicDiv = document.getElementById("music");
+const selectedShape = document.getElementById("selectedShape");
+const selectedBackground = document.getElementById("selectedBackground");
+const selectedMusic = document.getElementById("selectedMusic");
+
+const backgroundInput = document.getElementById("id_background");
+const pointsJSONInput = document.getElementById("id_points");
 
 
 // MAIN CODE //
@@ -190,7 +205,70 @@ function deletePoint(row) {
     drawPoints();
 }
 
-addActivityForm.addEventListener("submit", function(e) {
-    const pointsJSONInput = document.getElementById("id_points");
-    pointsJSONInput.value = JSON.stringify(Points);
+sendFormButton.addEventListener("click", function() {
+    if(Points.length === 0)
+        pointsJSONInput.value = "";
+    else pointsJSONInput.value = JSON.stringify(Points);
 });
+
+selectShapeButton.addEventListener("click", function() {
+    shapesDiv.style.display = "block";
+    backgroundsDiv.style.display = "none";
+    musicDiv.style.display = "none";
+
+    if(!isShowingItems)
+        showItemsButton.click();
+});
+
+selectBackgroundButton.addEventListener("click", function() {
+    backgroundsDiv.style.display = "block";
+    shapesDiv.style.display = "none";
+    musicDiv.style.display = "none";
+
+    if(!isShowingItems)
+        showItemsButton.click();
+});
+
+selectMusicButton.addEventListener("click", function() {
+    musicDiv.style.display = "block";
+    shapesDiv.style.display = "none";
+    backgroundsDiv.style.display = "none";
+
+    if(!isShowingItems) {
+        showItemsButton.click();
+    }
+
+});
+
+showItemsButton.addEventListener("click", function() {
+    if(isShowingItems) {
+        this.style.display  = "none";
+        isShowingItems = false;
+    } else {
+        this.style.display  = "inline-block";
+        isShowingItems = true;
+    }
+});
+
+window.onload = () => {
+    showItemsButton.click();
+    pointsJSONInput.value = "";
+};
+
+function changeShape(shape) {
+    console.log(shape);
+}
+
+
+function changeBackground(newBackground) {
+    backgroundImage.style.backgroundImage = "url("+ newBackground + ")";
+    selectedBackground.value = newBackground;
+
+    let backgroundName = newBackground.split("/")[newBackground.split("/").length-1];
+    selectedBackground.value = backgroundName;
+
+    backgroundInput.value = newBackground;
+}
+
+function changeMusic() {
+}
