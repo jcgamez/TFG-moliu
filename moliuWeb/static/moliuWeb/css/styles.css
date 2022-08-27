@@ -21,6 +21,12 @@ h1, h2, h3, h4, h5, h6, small {
     cursor: pointer;
 }
 
+.items-list > div button {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .items-list > div > button:hover,
 .items-list > div > button:hover .item {
     color: #999;
@@ -39,4 +45,5 @@ h1, h2, h3, h4, h5, h6, small {
 	padding: 0;
 	cursor: pointer;
 	outline: inherit;
+    max-width: 100%;
 }

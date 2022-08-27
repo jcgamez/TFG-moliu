@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from .storage import MyFileStorage
 
 
 class Patient(models.Model):
@@ -19,9 +18,8 @@ def getSentinelPatient():
 class Activity(models.Model):
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=255)
-    background = models.FileField(
-        upload_to="activities/backgrounds/", null=True, blank=False, storage=MyFileStorage()
-    )
+    background = models.CharField(max_length=255, null=True, blank=False)
+    music = models.CharField(max_length=255, null=True, blank=True)
     points = models.JSONField(null=True, blank=False)
 
     def __str__(self) -> str:

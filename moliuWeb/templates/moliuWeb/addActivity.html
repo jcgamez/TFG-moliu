@@ -94,6 +94,7 @@
                     </div>
                   </div>
                 <!-- /btn-group -->
+                {{ form.music }}
                 <input type="text" disabled class="form-control" id="selectedMusic" placeholder="Música">
               </div>
             </div>
@@ -142,8 +143,8 @@
           <div id="shapes" class="items-list clearfix">
             {% for shape in shapes %}
             <div class="col-md-2">
-              <button class="item" type="button" onclick="changeShape('/media/activities/shapes/{{ shape }}')">
-                <img class="shape-item mb-2" src="/media/activities/shapes/{{ shape }}" alt="Shape Image">
+              <button class="item" type="button" onclick="changeShape('/media/activities/shapes/{{ shape }}', 'shape-{{forloop.counter}}')">
+                <img id="shape-{{forloop.counter}}" class="shape-item mb-2" src="/media/activities/shapes/{{ shape }}" alt="Shape Image">
                 <br />
                 {{ shape|capfirst }}
               </button>
@@ -166,7 +167,7 @@
           <div id="music" class="items-list clearfix">
             {% for song in music %}
             <div class="col-md-2">
-              <button class="item mb-1" type="button" onclick="changeMusic()">
+              <button class="item mb-1" type="button" onclick="changeMusic('/media/activities/music/{{ song }}')">
                 <img class="music-item mb-2" src="{% static 'moliuWeb/img/quaver.png' %}" alt="Quaver Image">
                 <br />
                 {{ song|capfirst }}
@@ -183,7 +184,7 @@
 
       <div class="row">
         <div class="col-sm-7">
-          <div class="card card-solid" id="background" style="aspect-ratio: 16/9;">
+          <div class="card card-solid mb-0" id="background" style="aspect-ratio: 16/9;">
             {{ form.background }}
             <div class="card-body p-0">
               <canvas id="canvas"></canvas>
@@ -191,10 +192,10 @@
           </div>
         </div>
         <div class="col-sm-5">
-          <div class="card card-primary" style="height: 530px;">
+          <div id="pointsDiv" class="card card-primary">
             {{ form.points }}
             <div class="card-header">Puntos</div>
-            <div class="card-body table-responsive p-0">
+            <div id="pointsTableDiv" class="card-body table-responsive p-0">
               <table id="points" class="table table-head-fixed table-bordered table-striped text-nowrap">
                 <thead>
                   <tr>
@@ -224,6 +225,11 @@
 {{ block.super }}
 <script src="{% static 'moliuWeb/js/addActivity.js' %}"></script>
 <!-- <script src="{% static 'moliuWeb/js/bootstrap-colorpicker.min.js' %}"></script> -->
+
+<script>
+  backgroundImage.style.backgroundImage = "url('{% static 'moliuWeb/img/selectBackground.png' %}')";
+</script>
+
 <script>
     $(function () {
         $('#activities').addClass('active');

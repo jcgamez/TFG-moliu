@@ -3,27 +3,44 @@
 
 // VARIABLES DECLARATION //
 class Point {
-    constructor(x, y, duration, number) {
+    constructor(x, y, duration, number, shape) {
         this.x = x;
         this.y = y;
         this.duration = duration;
         this.number = number;
+        this.shape = shape;
+    }
+}
+
+class PointUtils {
+    constructor(canvasX, canvasY, shapeImg) {
+        this.canvasX = canvasX;
+        this.canvasY = canvasY;
+        this.shapeImg = shapeImg;
     }
 }
 
 const Points = []; // Same as new Array()
-const pointSize = 10;
+const PointsUtils  = [];
+const pointSize = 20;
+const imagePointWidth = 50;
+const defaultScreenWidth = 1920;
+const defaultScreenHeight = 1080;
+
 let numberOfPoints = 0;
 let defaultDuration = 5;
-let isBackgroundSelected = false;
-let isShapeSelected = false;
+// let isBackgroundSelected = false;
+// let isShapeSelected = false;
 let isShowingItems = true;
+let currentShapePath = "";
+let currentShapeImage = "";
 
 const backgroundImage = document.getElementById("background");
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const pointsTable = document.getElementById("points");
-const addActivityForm = document.getElementsByTagName("form")[0];
+const pointsTableDiv = document.getElementById("pointsTableDiv")
+// const addActivityForm = document.getElementsByTagName("form")[0];
 const sendFormButton = document.getElementById("sendForm");
 const selectBackgroundButton = document.getElementById("selectBackground");
 const selectShapeButton = document.getElementById("selectShape");
@@ -37,25 +54,26 @@ const selectedBackground = document.getElementById("selectedBackground");
 const selectedMusic = document.getElementById("selectedMusic");
 
 const backgroundInput = document.getElementById("id_background");
+const musicInput = document.getElementById("id_music");
 const pointsJSONInput = document.getElementById("id_points");
 
 
 // MAIN CODE //
 backgroundImage.style.backgroundSize = "cover";
-backgroundImage.style.backgroundImage = "url('https://images3.alphacoders.com/855/85585.jpg')";
-backgroundImage.style.cursor = "crosshair";
 
 canvas.style.width = "100%";
 canvas.style.height = "100%";
 canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
+canvas.style.cursor = "crosshair";
 
 canvas.addEventListener("click", function(e) {
     const [x, y] = getPosition(e);
     numberOfPoints++;
 
-    drawPoint(x, y);
+    drawPoint(x, y, currentShapeImage);
     addPoint(x, y);
+    pointsTableDiv.scrollTo(0, pointsTable.offsetHeight);
 });
 
 function getPosition(event) {
@@ -66,22 +84,45 @@ function getPosition(event) {
     return [x, y];
 }
 
-function drawPoint(x,y) {
-    ctx.fillStyle = "#ff2626";
+function drawPoint(x,y, shape="") {
+    if(shape === "") {
+        // Red
+        // ctx.fillStyle = "#ff2626";
+        ctx.fillStyle = "#ffffff";
 
-    ctx.beginPath();
-    ctx.arc(x, y, pointSize, 0, Math.PI * 2, true);
-    ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y, pointSize, 0, Math.PI * 2, true);
+        ctx.fill();
+    } else {
+        let scaledHeight = imagePointWidth*shape.height/shape.width;
+        let centeredX = x - imagePointWidth/2;
+        let centeredY = y - scaledHeight/2;
+        ctx.drawImage(shape, centeredX, centeredY, imagePointWidth, scaledHeight);
+    }
 }
 
 function drawPoints() {
-    for(let i=0; i<Points.length; i++)
-        drawPoint(Points[i].x, Points[i].y);
+    for(let i=0; i<PointsUtils.length; i++)
+        drawPoint(PointsUtils[i].canvasX, PointsUtils[i].canvasY, PointsUtils[i].shapeImg);
 }
 
 function addPoint(x, y) {
-    Points.push(new Point(x, y, defaultDuration, numberOfPoints));
-    addPointToTable(x, y);
+    let scaledX = (x * defaultScreenWidth / canvas.width).toFixed(2);
+    let scaledY = (y * defaultScreenHeight / canvas.height).toFixed(2);
+
+    if (scaledX < 0)
+        scaledX = 0;
+    if (scaledX > defaultScreenWidth)
+        scaledX = defaultScreenWidth;
+
+    if (scaledY < 0)
+        scaledY = 0;
+    if (scaledY > defaultScreenHeight)
+        scaledY = defaultScreenHeight;
+
+    PointsUtils.push(new PointUtils(x, y, currentShapeImage));
+    Points.push(new Point(scaledX, scaledY, defaultDuration, numberOfPoints, currentShapePath));
+    addPointToTable(scaledX, scaledY);
 }
 
 function addPointToTable(x, y, duration=defaultDuration, number=numberOfPoints) {
@@ -111,9 +152,11 @@ function addPointToTable(x, y, duration=defaultDuration, number=numberOfPoints) 
 
 function changePointNumber(numberCell, row) {
     let oldPoint = Points[row.rowIndex-1];
+    let oldPointUtils = PointsUtils[row.rowIndex-1];
     let oldNumber = oldPoint.number;
     let newNumber = Number(numberCell.innerText);
-    let newPoint = new Point(oldPoint.x, oldPoint.y, oldPoint.duration, newNumber);
+    let newPoint = new Point(oldPoint.x, oldPoint.y, oldPoint.duration, newNumber, oldPoint.shape);
+    let newPointUtils = new PointUtils(oldPointUtils.canvasX, oldPointUtils.canvasY, oldPointUtils.shapeImg);
 
     let rows = pointsTable.rows;
     let numberOfRows = rows.length;
@@ -139,6 +182,7 @@ function changePointNumber(numberCell, row) {
 
     // Add point to array at position newNumber
     Points.splice(newNumber-1, 0, newPoint);
+    PointsUtils.splice(newNumber-1, 0, newPointUtils);
 
     // Update following points in table and array
     for(let i=newNumber+1; i<numberOfRows; i++) {
@@ -197,6 +241,7 @@ function deletePoint(row) {
     }
 
     Points.splice(rowIndex-1, 1);
+    PointsUtils.splice(rowIndex-1, 1);
     numberOfPoints--;
     pointsTable.deleteRow(rowIndex);
 
@@ -237,7 +282,6 @@ selectMusicButton.addEventListener("click", function() {
     if(!isShowingItems) {
         showItemsButton.click();
     }
-
 });
 
 showItemsButton.addEventListener("click", function() {
@@ -253,12 +297,18 @@ showItemsButton.addEventListener("click", function() {
 window.onload = () => {
     showItemsButton.click();
     pointsJSONInput.value = "";
+    const pointsDiv = document.getElementById("pointsDiv");
+
+    if (backgroundImage.clientHeight >= 300)
+        pointsDiv.style.height = String(backgroundImage.clientHeight) + "px";
+    else pointsDiv.style.height = "300px";
 };
 
-function changeShape(shape) {
-    console.log(shape);
+function changeShape(shape, shapeId) {
+    currentShapePath = shape;
+    currentShapeImage = document.getElementById(shapeId);
+    selectedShape.value = shape.split("/")[shape.split("/").length-1];
 }
-
 
 function changeBackground(newBackground) {
     backgroundImage.style.backgroundImage = "url("+ newBackground + ")";
@@ -270,5 +320,8 @@ function changeBackground(newBackground) {
     backgroundInput.value = newBackground;
 }
 
-function changeMusic() {
+function changeMusic(newMusic) {
+    let songName = newMusic.split("/")[newMusic.split("/").length-1];
+    selectedMusic.value = songName;
+    musicInput.value = newMusic;
 }
