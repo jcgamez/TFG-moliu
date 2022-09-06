@@ -4,6 +4,7 @@ from .models import Patient, Activity, Game, Posture
 import os
 import ffmpeg
 import datetime
+import shutil
 
 
 def importGame(gameVideo, jointsFile) -> None:
@@ -55,7 +56,9 @@ def createDataFile(game):
     now = datetime.datetime.now().strftime(settings.DATETIME_FORMAT) + ".txt"
     dataFile = os.path.join(exportedDataDir, now)
 
-    os.system(f"mkdir -p {exportedDataDir} && cp {game.joints.path} {dataFile}")
+    if not os.path.exists(exportedDataDir):
+        os.mkdir(exportedDataDir)
+    shutil.copyfile(game.joints.path, dataFile)
 
     return dataFile
 
@@ -83,7 +86,8 @@ def addScoredPosturesToDataFile(game, dataFile):
 
 def createTrainingFile(dataFiles):
     trainingDataDir = os.path.join(settings.MEDIA_ROOT, "datasets")
-    os.system(f"mkdir -p {trainingDataDir}")
+    if not os.path.exists(trainingDataDir):
+        os.mkdir(trainingDataDir)
     now = datetime.datetime.now().strftime(settings.DATETIME_FORMAT)
     filename = os.path.join(settings.MEDIA_ROOT, "datasets", now) + ".arff"
 
@@ -123,17 +127,18 @@ def createTrainingFile(dataFiles):
             trainingFile.write("@attribute " + bodyPart + "Y real\n")
             trainingFile.write("@attribute " + bodyPart + "Z real\n\n")
 
-        for part1 in bodyParts:
-            if part1 == "SpineBase":
-                continue
-
-            for part2 in bodyParts:
-                if part2 in [part1, "SpineBase"]:
-                    continue
-
-                trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]XY real\n")
-                trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]XZ real\n")
-                trainingFile.write("@attribute Angle[" + part1 + "-" + part2 + "]YZ real\n\n")
+        for i in range(0, len(bodyParts) - 1):
+            for j in range(i + 1, len(bodyParts)):
+                trainingFile.write(
+                    "@attribute Angle[" + bodyParts[i] + "-" + bodyParts[j] + "]XY real\n"
+                )
+                trainingFile.write(
+                    "@attribute Angle[" + bodyParts[i] + "-" + bodyParts[j] + "]XZ real\n"
+                )
+                trainingFile.write(
+                    "@attribute Angle[" + bodyParts[i] + "-" + bodyParts[j] + "]YZ real\n"
+                )
+            trainingFile.write("\n")
 
         for i in range(0, len(bodyParts) - 1):
             for j in range(i + 1, len(bodyParts)):
@@ -182,14 +187,10 @@ def obtainAngles(bodyParts, coordinatesInSpace):
         }
         i += 3
 
-    for part1 in bodyParts:
-        if part1 == "SpineBase":
-            continue
-
-        for part2 in bodyParts:
-            if part2 in [part1, "SpineBase"]:
-                continue
-
+    for i in range(0, len(bodyParts) - 1):
+        for j in range(i + 1, len(bodyParts)):
+            part1 = bodyParts[i]
+            part2 = bodyParts[j]
             anglesByPlane = getAnglesByPlane(joints[part1], joints[part2], joints["SpineBase"])
             angles[part1 + "-" + part2] = anglesByPlane
 
