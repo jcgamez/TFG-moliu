@@ -127,7 +127,7 @@ def createTrainingFile(dataFiles):
             trainingFile.write("@attribute " + bodyPart + "Y real\n")
             trainingFile.write("@attribute " + bodyPart + "Z real\n\n")
 
-        for i in range(0, len(bodyParts) - 1):
+        for i in range(1, len(bodyParts) - 1):
             for j in range(i + 1, len(bodyParts)):
                 trainingFile.write(
                     "@attribute Angle[" + bodyParts[i] + "-" + bodyParts[j] + "]XY real\n"
@@ -187,7 +187,7 @@ def obtainAngles(bodyParts, coordinatesInSpace):
         }
         i += 3
 
-    for i in range(0, len(bodyParts) - 1):
+    for i in range(1, len(bodyParts) - 1):
         for j in range(i + 1, len(bodyParts)):
             part1 = bodyParts[i]
             part2 = bodyParts[j]
