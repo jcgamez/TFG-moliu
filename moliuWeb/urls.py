@@ -20,7 +20,11 @@ urlpatterns = [
     path("games/delete/<int:pk>", views.GameDeleteView.as_view(), name="deleteGame"),
     path("games/classify/<int:gameId>", views.ClassifyPostures.as_view(), name="classifyPostures"),
     path("models", views.ModelsView.as_view(), name="models"),
+    path("models/add/", views.ModelCreateView.as_view(), name="importModel"),
+    path("models/update/<int:pk>", views.ModelUpdateView.as_view(), name="updateModel"),
+    path("models/delete/<int:pk>", views.ModelDeleteView.as_view(), name="deleteModel"),
     path(
         "models/createTrainingSet/", views.CreateTrainingSetView.as_view(), name="createTrainingSet"
     ),
+    path("models/classify/<int:modelId>", views.ClassifyView.as_view(), name="classify"),
 ]

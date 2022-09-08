@@ -31,12 +31,13 @@ def getSentinelActivity():
 
 
 class Model(models.Model):
-    filename = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default="Un modelo")
+    description = models.CharField(max_length=255, null=True, blank=True)
     learningTechnique = models.CharField(max_length=255)
+    filename = models.FileField(upload_to="models/")
 
     def __str__(self) -> str:
-        return self.filename
+        return str(self.filename)
 
 
 def videoUploadPath(instance, filename):

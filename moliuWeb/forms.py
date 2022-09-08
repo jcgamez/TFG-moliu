@@ -1,5 +1,5 @@
 from django import forms
-from .models import Activity, Game, Posture
+from .models import Activity, Game, Posture, Model
 from django.contrib.auth import forms as authForms
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -102,3 +102,63 @@ class CreateTrainingSet(forms.Form):
                     attrs={"class": "form-control"}
                 )
                 self.fields[game.directoryName].choices = dataFilesChoices
+
+
+class AddModel(forms.ModelForm):
+    class Meta:
+        model = Model
+        fields = "__all__"
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nombre del modelo"}
+            ),
+            "description": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descripción del modelo"}
+            ),
+            "learningTechnique": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Técnica de aprendizaje"}
+            ),
+            "filename": forms.ClearableFileInput(
+                attrs={"class": "custom-file-input", "style": "cursor: pointer;"}
+            ),
+        }
+
+    def clean_filename(self):
+        data = self.cleaned_data["filename"]
+        print(data)
+        if not str(data).endswith(".model"):
+            print("HOla")
+            raise (ValidationError('El archivo del modelo debe ser ".model"'))
+        return data
+
+
+class UpdateModel(forms.ModelForm):
+    class Meta:
+        model = Model
+        fields = ["name", "description", "learningTechnique"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nombre del modelo"}
+            ),
+            "description": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Descripción del modelo"}
+            ),
+            "learningTechnique": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Técnica de aprendizaje"}
+            ),
+        }
+
+
+class ClassifyForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ClassifyForm, self).__init__(*args, **kwargs)
+        self.fields["jointsFile"] = forms.FileField()
+        self.fields["jointsFile"].widget = forms.ClearableFileInput(
+            attrs={"class": "custom-file-input", "style": "cursor: pointer;"}
+        )
+
+    def clean_jointsFile(self):
+        data = self.cleaned_data["jointsFile"]
+        if magic.from_buffer(data.read(2048), mime=True) != "text/plain":
+            raise (ValidationError('El archivo de los joints debe ser ".txt"'))
+        return data

@@ -8,10 +8,27 @@ from django.urls import reverse, reverse_lazy
 from django.views import View, generic
 from django.conf import settings
 from .models import Posture, Patient, Activity, Game, Model
-from .forms import ImportGame, ClassifyPosture, LoginForm, CreateTrainingSet, AddActivity
-from .utils import importGame, addScoredPosturesToDataFile, createDataFile, createTrainingFile
+from .forms import (
+    ClassifyForm,
+    ImportGame,
+    ClassifyPosture,
+    LoginForm,
+    CreateTrainingSet,
+    AddActivity,
+    AddModel,
+    UpdateModel,
+)
+from .utils import (
+    importGame,
+    addScoredPosturesToDataFile,
+    createDataFile,
+    createTrainingFile,
+    convertJointsFileToARFF,
+    classifyPosturesUsingModel,
+)
 import random
 import os
+import datetime
 
 
 class LoginView(auth_views.LoginView):
@@ -182,9 +199,6 @@ class ModelsView(LoginRequiredMixin, generic.ListView):
     model = Model
     template_name = "moliuWeb/models.html"
 
-    def get_queryset(self):
-        pass
-
 
 class CreateTrainingSetView(LoginRequiredMixin, generic.FormView):
     template_name = "moliuWeb/createTrainingSet.html"
@@ -216,3 +230,89 @@ class CreateTrainingSetView(LoginRequiredMixin, generic.FormView):
             print(createTrainingSetForm.errors)
 
         return HttpResponseRedirect(reverse("moliuWeb:models"))
+
+
+class ModelCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Model
+    template_name = "moliuWeb/addModel.html"
+    form_class = AddModel
+
+    def post(self, request):
+        addModelForm = self.form_class(request.POST, request.FILES)
+
+        if addModelForm.is_valid():
+            addModelForm.save()
+            return HttpResponseRedirect(reverse("moliuWeb:models"))
+        else:
+            context = {"form": addModelForm}
+            return render(request, self.template_name, context=context)
+
+
+class ModelUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Model
+    template_name = "moliuWeb/updateModel.html"
+    success_url = reverse_lazy("moliuWeb:models")
+    form_class = UpdateModel
+
+
+class ModelDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Model
+    template_name = "moliuWeb/deleteModel.html"
+    success_url = reverse_lazy("moliuWeb:models")
+
+
+class ClassifyView(LoginRequiredMixin, generic.FormView):
+    form_class = ClassifyForm
+    template_name = "moliuWeb/classify.html"
+
+    def get(self, request, modelId):
+        classifyForm = self.form_class()
+        return render(
+            request,
+            self.template_name,
+            {
+                "modelId": modelId,
+                "form": classifyForm,
+            },
+        )
+
+    def post(self, request, modelId):
+        classifyForm = self.form_class(request.POST, request.FILES)
+
+        if classifyForm.is_valid():
+            jointsFile = classifyForm.cleaned_data["jointsFile"]
+            predictionsDirectory = os.path.join(settings.MEDIA_ROOT, "predictions")
+
+            if not os.path.exists(predictionsDirectory):
+                os.mkdir(predictionsDirectory)
+
+            directory = datetime.datetime.now().strftime(settings.DATETIME_FORMAT)
+            outputDirectory = os.path.join(settings.MEDIA_ROOT, "predictions", directory)
+            os.mkdir(outputDirectory)
+
+            convertJointsFileToARFF(jointsFile, outputDirectory)
+            model = Model.objects.get(pk=modelId)
+
+            classifyPosturesUsingModel(model.filename.path, outputDirectory)
+
+            messages.success(
+                request,
+                "Posturas clasificadas correctamente. El fichero de "
+                + "resultados será descargado y almacenado en el servidor",
+            )
+
+            return HttpResponseRedirect(reverse("moliuWeb:models"))
+
+            # TODO: Download result file
+            # predictionFile = os.path.join(outputDirectory, "results.txt")
+            # response['Content-Disposition'] = "attachment; filename=%s" % filename
+            # return response
+            # return HttpResponseRedirect(
+            #     reverse("moliuWeb:downloadPrediction", kwargs={"predictionFile": predictionFile}),
+            # )
+            #
+            # @login_required
+            # def downloadPrediction(request, predictionFile):
+        else:
+            context = {"modelId": modelId, "form": classifyForm}
+            return render(request, self.template_name, context=context)

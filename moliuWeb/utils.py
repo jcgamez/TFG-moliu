@@ -292,3 +292,102 @@ def addDistancesToAttributes(attributes, distances):
         attributes.append(str(distance))
 
     attributes.append(classValue)
+
+
+def convertJointsFileToARFF(jointsFile, directory):
+    filename = os.path.join(directory, "dataset.arff")
+
+    bodyParts = [
+        "SpineBase",
+        "SpineMid",
+        "Neck",
+        "Head",
+        "ShoulderLeft",
+        "ElbowLeft",
+        "WristLeft",
+        "HandLeft",
+        "ShoulderRight",
+        "ElbowRight",
+        "WristRight",
+        "HandRight",
+        "HipLeft",
+        "KneeLeft",
+        "AnkleLeft",
+        "FootLeft",
+        "HipRight",
+        "KneeRight",
+        "AnkleRight",
+        "FootRight",
+        "SpineShoulder",
+        "HandTipLeft",
+        "ThumbLeft",
+        "HandTipRight",
+        "ThumbRight",
+    ]
+
+    with open(filename, "w+") as trainingFile:
+        trainingFile.write("@relation posturasClasificadas--" + directory + "\n\n")
+
+        for bodyPart in bodyParts:
+            trainingFile.write("@attribute " + bodyPart + "X real\n")
+            trainingFile.write("@attribute " + bodyPart + "Y real\n")
+            trainingFile.write("@attribute " + bodyPart + "Z real\n\n")
+
+        for i in range(1, len(bodyParts) - 1):
+            for j in range(i + 1, len(bodyParts)):
+                trainingFile.write(
+                    "@attribute Angle[" + bodyParts[i] + "-" + bodyParts[j] + "]XY real\n"
+                )
+                trainingFile.write(
+                    "@attribute Angle[" + bodyParts[i] + "-" + bodyParts[j] + "]XZ real\n"
+                )
+                trainingFile.write(
+                    "@attribute Angle[" + bodyParts[i] + "-" + bodyParts[j] + "]YZ real\n"
+                )
+            trainingFile.write("\n")
+
+        for i in range(0, len(bodyParts) - 1):
+            for j in range(i + 1, len(bodyParts)):
+                trainingFile.write(
+                    "@attribute Distance[" + bodyParts[i] + "-" + bodyParts[j] + "] real\n"
+                )
+            trainingFile.write("\n")
+
+        trainingFile.write("@attribute class {-1, 0, 25, 50, 75, 100}\n\n")
+        trainingFile.write("@data\n")
+
+        with jointsFile.open() as f:
+            for lineInBytes in f.readlines()[1:]:
+                line = lineInBytes.decode("utf-8")
+                attributes = line.split(" ")
+                attributes[-1] = attributes[-1].strip()
+                preprocessAttributes(attributes)
+                angles = obtainAngles(bodyParts, attributes[1:])
+                distances = obtainDistances(bodyParts, attributes[1:])
+                addAnglesAndDistancesToAttributes(attributes, angles, distances)
+                attributesWithoutFrame = ",".join(attributes[1:])
+                trainingFile.write(attributesWithoutFrame)
+
+
+def addAnglesAndDistancesToAttributes(attributes, angles, distances):
+    for anglesByPart in angles.values():
+        attributes.append(str(anglesByPart["XY"]))
+        attributes.append(str(anglesByPart["XZ"]))
+        attributes.append(str(anglesByPart["YZ"]))
+
+    for distance in distances.values():
+        attributes.append(str(distance))
+
+    attributes.append("?\n")
+
+
+def classifyPosturesUsingModel(model, directory):
+    # resultsFile = os.path.join(directory, "results.txt")
+    # dataset = os.path.join(directory, "dataset.arff")
+    predictionsFile = os.path.join(directory, "predictions.arff")
+    dataset = os.path.join(directory, "dataset.arff")
+
+    os.system(
+        "java weka.filters.supervised.attribute.AddClassification "
+        + f"-serialized {model} -classification -i {dataset} -c last > {predictionsFile}"
+    )
