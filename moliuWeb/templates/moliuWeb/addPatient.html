@@ -24,12 +24,49 @@
 <!-- Main content -->
 <section class="content">
   <div class="container-fluid">
-    <form method="POST">
-      {% csrf_token %}
+        {% if form.errors %}
+          <div class="alert alert-danger alert-dismissible">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <h5><i class="icon fas fa-ban"></i>Creación de paciente incorrecta</h5>
+              {{ form.errors.nickname }}
+          </div>
+        {% endif %}
 
-      {{ form.as_p }}
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Rellene los siguientes campos</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="card-body">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label for="name">Nombre</label>
+                                {{ form.name }}
+                            </div>
 
-      <input type="submit" value="Confirmar">
+                            <div class="col-sm-6">
+                                <label for="surnames">Apellidos</label>
+                                {{ form.surnames }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nickname">Nombre de usuario</label>
+                        {{ form.nickname }}
+                    </div>
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Añadir paciente</button>
+                </div>
+            </form>
+        </div>
   </div>
 </section>
 

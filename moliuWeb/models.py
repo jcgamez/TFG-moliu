@@ -16,7 +16,7 @@ def getSentinelPatient():
 
 
 class Activity(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=255)
     background = models.CharField(max_length=255, null=True, blank=False)
     music = models.CharField(max_length=255, null=True, blank=True)
@@ -31,7 +31,7 @@ def getSentinelActivity():
 
 
 class Model(models.Model):
-    name = models.CharField(max_length=255, default="Un modelo")
+    name = models.CharField(max_length=255, default="Un modelo", unique=True)
     description = models.CharField(max_length=255, null=True, blank=True)
     learningTechnique = models.CharField(max_length=255)
     filename = models.FileField(upload_to="models/")
@@ -51,7 +51,6 @@ def jointsUploadPath(instance, filename):
 class Game(models.Model):
     activity = models.ForeignKey(Activity, on_delete=models.SET(getSentinelActivity))
     patient = models.ForeignKey(Patient, on_delete=models.SET(getSentinelPatient))
-    model = models.ForeignKey(Model, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     video = models.FileField(upload_to=videoUploadPath)
     joints = models.FileField(upload_to=jointsUploadPath)

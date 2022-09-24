@@ -1,5 +1,5 @@
 from django import forms
-from .models import Activity, Game, Posture, Model
+from .models import Activity, Game, Posture, Model, Patient
 from django.contrib.auth import forms as authForms
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -60,8 +60,8 @@ class ImportGame(forms.ModelForm):
 
     def clean_video(self):
         data = self.cleaned_data["video"]
-        if magic.from_buffer(data.read(2048), mime=True) != "video/x-msvideo":
-            raise (ValidationError('El archivo de la partida debe ser ".avi"'))
+        if magic.from_buffer(data.read(2048), mime=True) not in ["video/x-msvideo", "video/mp4"]:
+            raise (ValidationError('El archivo de la partida debe ser ".avi" o ".mp4'))
         return data
 
     def clean_joints(self):
@@ -104,6 +104,23 @@ class CreateTrainingSet(forms.Form):
                 self.fields[game.directoryName].choices = dataFilesChoices
 
 
+class PatientForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = "__all__"
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nombre del paciente"}
+            ),
+            "surnames": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Apellidos del paciente"}
+            ),
+            "nickname": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Nombre de usuario del paciente"}
+            ),
+        }
+
+
 class AddModel(forms.ModelForm):
     class Meta:
         model = Model
@@ -127,7 +144,6 @@ class AddModel(forms.ModelForm):
         data = self.cleaned_data["filename"]
         print(data)
         if not str(data).endswith(".model"):
-            print("HOla")
             raise (ValidationError('El archivo del modelo debe ser ".model"'))
         return data
 

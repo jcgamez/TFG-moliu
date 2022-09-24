@@ -16,6 +16,7 @@ from .forms import (
     CreateTrainingSet,
     AddActivity,
     AddModel,
+    PatientForm,
     UpdateModel,
 )
 from .utils import (
@@ -56,16 +57,25 @@ class PatientsView(LoginRequiredMixin, generic.ListView):
 
 class PatientCreateView(LoginRequiredMixin, generic.CreateView):
     model = Patient
-    fields = ["name", "surnames", "nickname"]
     template_name = "moliuWeb/addPatient.html"
-    success_url = reverse_lazy("moliuWeb:patients")
+    form_class = PatientForm
+
+    def post(self, request):
+        addPatientForm = self.form_class(request.POST, request.FILES)
+
+        if addPatientForm.is_valid():
+            addPatientForm.save()
+            return HttpResponseRedirect(reverse("moliuWeb:patients"))
+        else:
+            context = {"form": addPatientForm}
+            return render(request, self.template_name, context=context)
 
 
 class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Patient
-    fields = ["name", "surnames", "nickname"]
     template_name = "moliuWeb/updatePatient.html"
     success_url = reverse_lazy("moliuWeb:patients")
+    form_class = PatientForm
 
 
 class PatientDeleteView(LoginRequiredMixin, generic.DeleteView):

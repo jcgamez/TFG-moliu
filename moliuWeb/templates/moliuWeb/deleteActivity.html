@@ -26,12 +26,10 @@
   <div class="container-fluid">
     <form method="POST">
       {% csrf_token %}
-
-      <div class="alert alert-danger">
-        ¿Seguro que quiere eliminar "{{ object }}"?
-      </div>
-
-      <input type="submit" value="Confirmar">
+        <div class="callout callout-danger">
+            <p>¿Seguro que quiere eliminar "{{ object }}"?</p>
+        </div>
+      <button type="submit" class="btn btn-danger">Confirmar</button>
   </div>
 </section>
 
