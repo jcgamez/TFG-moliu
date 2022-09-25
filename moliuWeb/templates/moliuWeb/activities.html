@@ -51,6 +51,9 @@
                 <td> {{ activity.name }} </td>
                 <td> {{ activity.description }} </td>
                 <td>
+                  <a href="{% url 'moliuWeb:updateActivity' activity.id %}">
+                    <button type="button" class="btn bg-secondary">Modificar actividad</button>
+                  </a>
                   <a href="{% url 'moliuWeb:deleteActivity' activity.id %}">
                     <button type="button" class="btn bg-danger">Eliminar actividad</button>
                   </a>

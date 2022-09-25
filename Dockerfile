@@ -8,8 +8,13 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends build-essential libpq-dev libmagic1 ffmpeg \
+    && apt-get install -y --no-install-recommends build-essential libpq-dev libmagic1 ffmpeg openjdk-11-jre wget unzip\
     && rm -rf /var/lib/apt/lists/*
+
+RUN wget https://prdownloads.sourceforge.net/weka/weka-3-8-6.zip \
+    && unzip weka-3-8-6.zip
+
+ENV CLASSPATH=/weka-3-8-6/weka.jar
 
 COPY requirements.txt /tmp/requirements.txt
 

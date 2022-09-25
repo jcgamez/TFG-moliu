@@ -26,7 +26,7 @@ class LoginForm(authForms.AuthenticationForm):
     )
 
 
-class AddActivity(forms.ModelForm):
+class ActivityForm(forms.ModelForm):
     class Meta:
         model = Activity
         fields = "__all__"

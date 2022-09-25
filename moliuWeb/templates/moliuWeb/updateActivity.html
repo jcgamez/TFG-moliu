@@ -1,0 +1,319 @@
+{% extends 'moliuWeb/base.html' %}
+{% load static %}
+
+{% block stylesheets %}
+
+<link href="{% static 'moliuWeb/css/styles.css' %}" rel="stylesheet">
+{{ block.super }}
+
+{% endblock %}
+
+{% block title %} Moliu | Modificar actividad {% endblock %}
+
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+      <div class="row mb-2">
+      <div class="col-sm-6">
+          <h1>Modificar actividad</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:index' %}">Moliu</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:activities' %}">Actividades</a></li>
+        <li class="breadcrumb-item active">Modificar actividad</li>
+        </ol>
+      </div>
+      </div>
+  </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.errors }}
+      <div class="card card-primary card-outline">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-6">
+                <label for="name">Nombre</label>
+                {{ form.name }}
+            </div>
+
+            <div class="col-sm-6">
+                <label for="description">Descripción</label>
+                {{ form.description }}
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-primary card-outline" id="prueba">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-sm-3">
+              <label for="shape">Forma</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Acción</button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="#">Añadir forma</a>
+                      <a id="selectShape" class="dropdown-item" href="#">Seleccionar forma</a>
+                    </div>
+                  </div>
+                <input type="text" disabled class="form-control" id="selectedShape" placeholder="Forma">
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <label for="shape">Fondo</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Acción</button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="#">Añadir fondo</a>
+                      <a id="selectBackground" class="dropdown-item" href="#">Seleccionar fondo</a>
+                    </div>
+                  </div>
+                <!-- /btn-group -->
+                <input type="text" disabled class="form-control" id="selectedBackground" placeholder="Fondo">
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <label for="shape">Música</label>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Acción</button>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="#">Añadir música</a>
+                      <a id="selectMusic" class="dropdown-item" href="#">Seleccionar música</a>
+                    </div>
+                  </div>
+                <!-- /btn-group -->
+                {{ form.music }}
+                <input type="text" disabled class="form-control" id="selectedMusic" placeholder="Música">
+              </div>
+            </div>
+
+            <!-- <div class="col-sm-3 form-group">
+              <label for="shape">Forma</label>
+              <input type="text" class="form-control" id="shape" placeholder="Forma">
+            </div> -->
+
+              <div class="col-sm-3 align-self-end">
+                <div class="card-tools">
+                  <button id="showItems" type="button" class="btn btn-danger" data-card-widget="collapse" style="display: none;">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <button type="submit" id="sendForm" class="btn btn-success">Modificar actividad</button>
+                  <button type="button" class="btn btn-info" data-toggle="modal" data-target="#staticBackdrop">Ayuda</button>
+                </div>
+              </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">¿Cómo crear una actividad?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <h5><b>Datos de la actividad</b></h5>
+                    <p>
+                      Una actividad puede contener los siguientes datos:
+                      <ul>
+                        <li>Nombre</li>
+                        <li>Descripción</li>
+                        <li>Fondo</li>
+                        <li>Música</li>
+                        <li>Puntos: cada punto contiene la siguiente información:
+                          <ul>
+                            <li>Orden</li>
+                            <li>Coordenadas</li>
+                            <li>Duración (segundos)</li>
+                            <li>Forma del punto</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    Además, la actividad debe tener al menos nombre, descripción, fondo y un punto.
+                    </p>
+
+                    <h5><b>Añadir puntos</b></h5>
+                    <p>
+                      Para añadir un punto hay que hacer clic en el área inferior izquierda de la pantalla. Los puntos
+                    añadidos se muestran en la tabla que aparece en la parte inferior derecha de la pantalla.
+                    </p>
+
+                    <h5><b>Modificar y eliminar puntos</b></h5>
+                    Se pueden modificar algunos datos sobre el punto, concretamente:
+                    <ul>
+                      <li>Posición en la que aparecerá durante el juego</li>
+                      <li>Duración del punto en pantalla</li>
+                    </ul>
+                    Para ello hay que seleccionar el dato de la tabla que se quiera modificar y cambiarlo. Por otro lado,
+                    también se puede eliminar un punto pulsando el botón que aparece en la columna acción de cada punto.
+                    </p>
+
+                    <h5><b>Cambiar forma seleccionada</b></h5>
+                    <p>
+                      Los puntos se pintan en la actividad con una forma específica, y ésta puede seleccionarse de entre
+                      todas las que haya disponibles. Para cambiar de forma hay que hacer clic primero en el botón "Acción"
+                      situado justo debajo del texto "Forma". Tras esto hay que pulsar en "Seleccionar forma" y finalmente
+                      elegir una de las formas disponibles.
+                    </p>
+
+                    <h5><b>Cambiar fondo</b></h5>
+                    <p>
+                      La actividad debe tener un fondo, y éste puede seleccionarse de entre todos los que haya disponibles.
+                      Para cambiar el fondo hay que hacer clic primero en el botón "Acción" situado justo debajo del texto "Fondo".
+                      Tras esto hay que pulsar en "Seleccionar fondo" y finalmente elegir uno de los fondos disponibles.
+                    </p>
+
+                    <h5><b>Cambiar música</b></h5>
+                    <p>
+                      La actividad debe tener música, y ésta puede seleccionarse de entre todas las canciones que haya disponibles.
+                      Para cambiar el audio hay que hacer clic primero en el botón "Acción" situado justo debajo del texto "Música".
+                      Tras esto hay que pulsar en "Seleccionar música" y finalmente elegir uno de los audios disponibles.
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Entendido</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body" style="display: none;">
+          <div id="shapes" class="items-list clearfix">
+            {% for shape in shapes %}
+            <div class="col-md-2">
+              <button class="item" type="button" onclick="changeShape('/media/activities/shapes/{{ shape }}', 'shape-{{forloop.counter}}')">
+                <img id="shape-{{forloop.counter}}" class="shape-item mb-2" src="/media/activities/shapes/{{ shape }}" alt="Shape Image">
+                <br />
+                {{ shape|capfirst }}
+              </button>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div id="backgrounds" class="items-list clearfix">
+            {% for background in backgrounds %}
+            <div class="col-md-2">
+              <button class="item" type="button" onclick="changeBackground('/media/activities/backgrounds/{{ background }}')">
+                <img class="background-item mb-2" src="/media/activities/backgrounds/{{ background }}" alt="Background Image">
+                <br />
+                {{ background|capfirst }}
+              </button>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div id="music" class="items-list clearfix">
+            {% for song in music %}
+            <div class="col-md-2">
+              <button class="item mb-1" type="button" onclick="changeMusic('/media/activities/music/{{ song }}')">
+                <img class="mb-2" src="{% static 'moliuWeb/img/quaver.png' %}" alt="Quaver Image">
+                <br />
+                {{ song|capfirst }}
+              </button>
+              <audio controls style="width: 80%;">
+                <source class="music-item" src="/media/activities/music/{{ song }}" type="audio/mp3" />
+                Tu navegador no soporta este reproductor de audio.
+              </audio>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-7">
+          <div class="card card-solid mb-0" id="background" style="aspect-ratio: 16/9;">
+            {{ form.background }}
+            <div class="card-body p-0">
+              <canvas id="canvas"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div id="pointsDiv" class="card card-primary">
+            {{ form.points }}
+            <div class="card-header">Puntos</div>
+            <div id="pointsTableDiv" class="card-body table-responsive p-0">
+              <table id="points" class="table table-head-fixed table-bordered table-striped text-nowrap">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Coordenadas</th>
+                    <th>Duración (segundos)</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+{{ block.super }}
+<script src="{% static 'moliuWeb/js/updateActivity.js' %}"></script>
+<!-- <script src="{% static 'moliuWeb/js/bootstrap-colorpicker.min.js' %}"></script> -->
+
+<script>
+  backgroundImage.style.backgroundImage = "url('{% static 'moliuWeb/img/selectBackground.png' %}')";
+</script>
+
+<script>
+    $(function () {
+        $('#activities').addClass('active');
+
+        $("#id_points").on("invalid", function(event) {
+          $(document).Toasts('create', {
+            class: "bg-danger",
+            title: 'Error: No hay puntos',
+            autohide: true,
+            delay: 3000,
+            body: 'Debe agregar al menos un punto a la actividad.'
+          });
+        });
+
+        $("#id_background").on("invalid", function(event) {
+          $(document).Toasts('create', {
+            class: "bg-danger",
+            title: 'Error: Falta fondo',
+            autohide: true,
+            delay: 3000,
+            body: 'Debe seleccionar el fondo de la actividad.'
+          });
+        });
+    });
+    //Colorpicker
+    // $('.my-colorpicker1').colorpicker()
+    // //color picker with addon
+    // $('.my-colorpicker2').colorpicker()
+
+    // $('.my-colorpicker2').on('colorpickerChange', function(event) {
+    //   $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+    // })
+</script>
+
+{% endblock %}

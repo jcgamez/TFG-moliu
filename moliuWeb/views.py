@@ -14,7 +14,7 @@ from .forms import (
     ClassifyPosture,
     LoginForm,
     CreateTrainingSet,
-    AddActivity,
+    ActivityForm,
     AddModel,
     PatientForm,
     UpdateModel,
@@ -96,7 +96,30 @@ class ActivitiesView(LoginRequiredMixin, generic.ListView):
 class ActivityCreateView(LoginRequiredMixin, generic.CreateView):
     model = Activity
     template_name = "moliuWeb/addActivity.html"
-    form_class = AddActivity
+    form_class = ActivityForm
+    success_url = reverse_lazy("moliuWeb:activities")
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        backgroundDir = os.path.join(settings.BASE_DIR, "media", "activities", "backgrounds")
+        shapeDir = os.path.join(settings.BASE_DIR, "media", "activities", "shapes")
+        musicDir = os.path.join(settings.BASE_DIR, "media", "activities", "music")
+
+        os.system(f"mkdir -p {backgroundDir}")
+        os.system(f"mkdir -p {shapeDir}")
+        os.system(f"mkdir -p {musicDir}")
+
+        context["shapes"] = sorted(os.listdir(shapeDir))
+        context["backgrounds"] = sorted(os.listdir(backgroundDir))
+        context["music"] = sorted(os.listdir(musicDir))
+
+        return context
+
+
+class ActivityUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Activity
+    template_name = "moliuWeb/updateActivity.html"
+    form_class = ActivityForm
     success_url = reverse_lazy("moliuWeb:activities")
 
     def get_context_data(self):
@@ -307,8 +330,7 @@ class ClassifyView(LoginRequiredMixin, generic.FormView):
 
             messages.success(
                 request,
-                "Posturas clasificadas correctamente. El fichero de "
-                + "resultados será descargado y almacenado en el servidor",
+                "Posturas clasificadas correctamente y guardadas en el servidor",
             )
 
             return HttpResponseRedirect(reverse("moliuWeb:models"))
