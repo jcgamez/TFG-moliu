@@ -77,10 +77,20 @@ def addScoredPosturesToDataFile(game, dataFile):
     with open(dataFile, "r+") as dataFileWithScores:
         frames = dataFileWithScores.readlines()
         dataFileWithScores.seek(0)
-        dataFileWithScores.write(frames[0].strip() + "; 26 --> [Class]\n")
-        for frame in range(1, len(frames)):
-            if frame - 1 in scoredPostures.keys():
-                dataFileWithScores.write(frames[frame].strip() + f" {scoredPostures[frame-1]}\n")
+        if frames[0][0] == "F":  # File from Moliu Game
+            dataFileWithScores.write(frames[0].strip() + ";Class\n")
+            for frame in range(1, len(frames)):
+                if frame - 1 in scoredPostures.keys():
+                    dataFileWithScores.write(
+                        frames[frame].strip() + f";{scoredPostures[frame-1]}\n"
+                    )
+        elif frames[0][0] == "0":  # File from JKinect
+            dataFileWithScores.write(frames[0].strip() + "; 26 --> [Class]\n")
+            for frame in range(1, len(frames)):
+                if frame - 1 in scoredPostures.keys():
+                    dataFileWithScores.write(
+                        frames[frame].strip() + f" {scoredPostures[frame-1]}\n"
+                    )
         dataFileWithScores.truncate()
 
 
@@ -147,6 +157,8 @@ def createTrainingFile(dataFiles):
                 )
             trainingFile.write("\n")
 
+        trainingFile.write("@attribute PointX real\n")
+        trainingFile.write("@attribute PointY real\n\n")
         trainingFile.write("@attribute class {-1, 0, 25, 50, 75, 100}\n\n")
         trainingFile.write("@data\n")
 
@@ -158,9 +170,14 @@ def createTrainingFile(dataFiles):
                 settings.MEDIA_ROOT, "games", game, "exportedData", dataFilename
             )
             with open(dataFilePath, "r") as dataFile:
-                for line in dataFile.readlines()[1:]:
-                    attributes = line.split(" ")
-                    preprocessAttributes(attributes)
+                lines = dataFile.readlines()
+
+                for line in lines[1:]:
+                    if lines[0][0] == "F":  # Data from MoliuGame
+                        attributes = line.split(";")
+                    elif lines[0][0] == "0":  # Data from JKinect
+                        attributes = line.split(" ")
+                        preprocessAttributes(attributes, True)
                     angles = obtainAngles(bodyParts, attributes[1:])
                     distances = obtainDistances(bodyParts, attributes[1:])
                     addAnglesToAttributes(attributes, angles)
@@ -169,9 +186,20 @@ def createTrainingFile(dataFiles):
                     trainingFile.write(attributesWithoutFrame)
 
 
-def preprocessAttributes(attributes):
+def preprocessAttributes(attributes, addClassValue):
     for i in range(3, len(attributes), 3):
         attributes[i] = str(round(float(attributes[i]), 2))
+
+    if addClassValue:
+        classValue = attributes[-1]
+        del attributes[-1]
+
+        attributes.append("?")
+        attributes.append("?")
+        attributes.append(classValue)
+    else:
+        attributes.append("?")
+        attributes.append("?")
 
 
 def obtainAngles(bodyParts, coordinatesInSpace):
@@ -239,13 +267,18 @@ def getAnglesByPlane(part1, part2, spineBase):
 
 def addAnglesToAttributes(attributes, angles):
     classValue = attributes[-1]
-    del attributes[-1]
+    pointX = attributes[-3]
+    pointY = attributes[-2]
+
+    del attributes[-3:]
 
     for anglesByPart in angles.values():
         attributes.append(str(anglesByPart["XY"]))
         attributes.append(str(anglesByPart["XZ"]))
         attributes.append(str(anglesByPart["YZ"]))
 
+    attributes.append(pointX)
+    attributes.append(pointY)
     attributes.append(classValue)
 
 
@@ -286,11 +319,16 @@ def getDistance(part1, part2, high):
 
 def addDistancesToAttributes(attributes, distances):
     classValue = attributes[-1]
-    del attributes[-1]
+    pointX = attributes[-3]
+    pointY = attributes[-2]
+
+    del attributes[-3:]
 
     for distance in distances.values():
         attributes.append(str(distance))
 
+    attributes.append(pointX)
+    attributes.append(pointY)
     attributes.append(classValue)
 
 
@@ -326,7 +364,7 @@ def convertJointsFileToARFF(jointsFile, directory):
     ]
 
     with open(filename, "w+") as trainingFile:
-        trainingFile.write("@relation posturasClasificadas--" + directory + "\n\n")
+        trainingFile.write("@relation predicciones--" + directory + "\n\n")
 
         for bodyPart in bodyParts:
             trainingFile.write("@attribute " + bodyPart + "X real\n")
@@ -353,23 +391,42 @@ def convertJointsFileToARFF(jointsFile, directory):
                 )
             trainingFile.write("\n")
 
+        trainingFile.write("@attribute PointX real\n")
+        trainingFile.write("@attribute PointY real\n\n")
         trainingFile.write("@attribute class {-1, 0, 25, 50, 75, 100}\n\n")
         trainingFile.write("@data\n")
 
         with jointsFile.open() as f:
+            firstLine = f.readlines()[0].decode("utf-8")
+
+            if firstLine[0] == "F":  # MoliuGame File
+                character = ";"
+                needPreprocess = False
+            elif firstLine[0] == "0":  # JKinect File
+                character = " "
+                needPreprocess = True
+
+            f.seek(0)
+
             for lineInBytes in f.readlines()[1:]:
                 line = lineInBytes.decode("utf-8")
-                attributes = line.split(" ")
+                attributes = line.split(character)
                 attributes[-1] = attributes[-1].strip()
-                preprocessAttributes(attributes)
+                if needPreprocess:
+                    preprocessAttributes(attributes, False)
                 angles = obtainAngles(bodyParts, attributes[1:])
                 distances = obtainDistances(bodyParts, attributes[1:])
-                addAnglesAndDistancesToAttributes(attributes, angles, distances)
+                addAnglesAndDistancesAndClassToAttributes(attributes, angles, distances)
                 attributesWithoutFrame = ",".join(attributes[1:])
                 trainingFile.write(attributesWithoutFrame)
 
 
-def addAnglesAndDistancesToAttributes(attributes, angles, distances):
+def addAnglesAndDistancesAndClassToAttributes(attributes, angles, distances):
+    pointX = attributes[-2]
+    pointY = attributes[-1]
+
+    del attributes[-2:]
+
     for anglesByPart in angles.values():
         attributes.append(str(anglesByPart["XY"]))
         attributes.append(str(anglesByPart["XZ"]))
@@ -378,12 +435,12 @@ def addAnglesAndDistancesToAttributes(attributes, angles, distances):
     for distance in distances.values():
         attributes.append(str(distance))
 
+    attributes.append(pointX)
+    attributes.append(pointY)
     attributes.append("?\n")
 
 
 def classifyPosturesUsingModel(model, directory):
-    # resultsFile = os.path.join(directory, "results.txt")
-    # dataset = os.path.join(directory, "dataset.arff")
     predictionsFile = os.path.join(directory, "predictions.arff")
     dataset = os.path.join(directory, "dataset.arff")
 
