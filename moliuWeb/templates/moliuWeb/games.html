@@ -64,7 +64,6 @@
                 <th>Actividad</th>
                 <th>Paciente</th>
                 <th>Fecha</th>
-                <th>Modelo</th>
                 <th>Acciones</th>
               </tr>
               </thead>
@@ -74,10 +73,12 @@
                 <td> {{ game.activity }} </td>
                 <td> {{ game.patient }} </td>
                 <td> {{ game.date }} </td>
-                <td> {{ game.model }} </td>
                 <td>
                   <a href="{% url 'moliuWeb:classifyPostures' game.id %}">
                     <button type="button" class="btn btn-info">Clasificar posturas</button>
+                  </a>
+                  <a href="{% url 'moliuWeb:updateGame' game.id %}">
+                    <button type="button" class="btn btn-secondary">Modificar partida</button>
                   </a>
                   <a href="{% url 'moliuWeb:deleteGame' game.id %}">
                     <button type="button" class="btn btn-danger">Eliminar partida</button>

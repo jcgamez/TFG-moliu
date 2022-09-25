@@ -18,6 +18,7 @@ from .forms import (
     AddModel,
     PatientForm,
     UpdateModel,
+    UpdateGame,
 )
 from .utils import (
     importGame,
@@ -172,6 +173,14 @@ class GameImportView(LoginRequiredMixin, generic.base.TemplateView):
             return render(request, self.template_name, context=context)
 
 
+class GameUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Game
+    template_name = "moliuWeb/updateGame.html"
+    success_url = reverse_lazy("moliuWeb:games")
+    # fields = ["activity", "patient"]
+    form_class = UpdateGame
+
+
 @login_required
 def exportGameData(request, gameId):
     game = Game.objects.get(pk=gameId)
@@ -259,6 +268,9 @@ class CreateTrainingSetView(LoginRequiredMixin, generic.FormView):
 
         if createTrainingSetForm.is_valid():
             createTrainingFile(createTrainingSetForm.cleaned_data)
+            messages.success(
+                request, "Fichero de entrenamiento creado correctamente y guardado en el servidor"
+            )
         else:
             print(createTrainingSetForm.errors)
 
@@ -313,6 +325,7 @@ class ClassifyView(LoginRequiredMixin, generic.FormView):
         classifyForm = self.form_class(request.POST, request.FILES)
 
         if classifyForm.is_valid():
+            print("A")
             jointsFile = classifyForm.cleaned_data["jointsFile"]
             predictionsDirectory = os.path.join(settings.MEDIA_ROOT, "predictions")
 
@@ -346,5 +359,6 @@ class ClassifyView(LoginRequiredMixin, generic.FormView):
             # @login_required
             # def downloadPrediction(request, predictionFile):
         else:
+            print("B")
             context = {"modelId": modelId, "form": classifyForm}
             return render(request, self.template_name, context=context)

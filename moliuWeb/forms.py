@@ -71,6 +71,28 @@ class ImportGame(forms.ModelForm):
         return data
 
 
+class UpdateGame(forms.ModelForm):
+    class Meta:
+        model = Game
+        fields = ["patient", "activity"]
+        widgets = {
+            "patient": forms.Select(attrs={"class": "form-control"}),
+            "activity": forms.Select(attrs={"class": "form-control"}),
+        }
+
+    def clean_video(self):
+        data = self.cleaned_data["video"]
+        if magic.from_buffer(data.read(2048), mime=True) not in ["video/x-msvideo", "video/mp4"]:
+            raise (ValidationError('El archivo de la partida debe ser ".avi" o ".mp4'))
+        return data
+
+    def clean_joints(self):
+        data = self.cleaned_data["joints"]
+        if magic.from_buffer(data.read(2048), mime=True) != "text/plain":
+            raise (ValidationError('El archivo de los joints debe ser ".txt"'))
+        return data
+
+
 class ClassifyPosture(forms.ModelForm):
     class Meta:
         model = Posture
@@ -175,6 +197,8 @@ class ClassifyForm(forms.Form):
 
     def clean_jointsFile(self):
         data = self.cleaned_data["jointsFile"]
-        if magic.from_buffer(data.read(2048), mime=True) != "text/plain":
+        if magic.from_buffer(data.read(2048), mime=True) != "text/plain" or not str(data).endswith(
+            ".txt"
+        ):
             raise (ValidationError('El archivo de los joints debe ser ".txt"'))
         return data
