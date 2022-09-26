@@ -285,6 +285,7 @@ def addAnglesToAttributes(attributes, angles):
 def obtainDistances(bodyParts, coordinatesInSpace):
     joints = {}
     distances = {}
+
     i = 0
 
     for bodyPart in bodyParts:
@@ -295,13 +296,23 @@ def obtainDistances(bodyParts, coordinatesInSpace):
         }
         i += 3
 
-    high = abs(((joints["FootLeft"]["Y"] + joints["FootRight"]["Y"]) / 2) - joints["Head"]["Y"])
+    if joints["FootLeft"]["Y"] > 0.000001 and joints["FootRight"]["Y"] > 0.000001:
+        high = abs(((joints["FootLeft"]["Y"] + joints["FootRight"]["Y"]) / 2) - joints["Head"]["Y"])
+    elif joints["FootLeft"]["Y"] < 0.000001 and joints["FootRight"]["Y"] < 0.000001:
+        high = joints["Head"]["Y"]
+    elif joints["FootLeft"]["Y"] < 0.000001 and joints["FootRight"]["Y"] > 0.000001:
+        high = abs(joints["FootRight"]["Y"] - joints["Head"]["Y"])
+    elif joints["FootLeft"]["Y"] > 0.000001 and joints["FootRight"]["Y"] < 0.000001:
+        high = abs(joints["FootLeft"]["Y"] - joints["Head"]["Y"])
 
     for i in range(0, len(bodyParts) - 1):
         for j in range(i + 1, len(bodyParts)):
             part1 = bodyParts[i]
             part2 = bodyParts[j]
-            distance = getDistance(joints[part1], joints[part2], high)
+            if high != 0:
+                distance = getDistance(joints[part1], joints[part2], high)
+            else:
+                distance = "?"
             distances[part1 + "-" + part2] = distance
 
     return distances
