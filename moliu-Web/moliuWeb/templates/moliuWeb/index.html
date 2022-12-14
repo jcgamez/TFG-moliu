@@ -1,0 +1,86 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{% static 'moliuWeb/css/adminlte.min.css' %}">
+  <link href="{% static 'moliuWeb/css/styles.css' %}" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@500&display=swap" rel="stylesheet">
+
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'moliuWeb/img/favicon.ico' %}">
+
+  <title>{% block title %} Moliu {% endblock %}</title>
+</head>
+<body class="bg-dark">
+  <div class="container-fluid">
+    <div class="row my-5 justify-content-sm-center align-items-center">
+        <div class="col-sm-3">
+          <h1 class="display-2 text-center">Moliu</h1>
+          <small class="d-block text-center">Administración</small>
+        </div>
+        <div class="col-sm-1 my-3" >
+          <img class="img-fluid mx-auto d-block" src="{% static 'moliuWeb/img/moliu.svg' %}" alt="Logo Moliu" width="150px"/>
+        </div>
+        <div class="col-sm-3">
+          <h2 style="text-align: center;">Bienvenido {{ user.username }}</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-sm-4 p-1 mx-5 mt-3">
+        <a href="{% url 'moliuWeb:patients' %}">
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Pacientes</h2>
+          </button>
+        </a>
+      </div>
+      <div class="col-sm-4 p-1 mx-5 mt-3">
+        <a href="{% url 'moliuWeb:activities' %}">
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Actividades</h2>
+          </button>
+        </a>
+      </div>
+
+      <div class="col-sm-4 p-1 mx-5 mt-3">
+        <a href="{% url 'moliuWeb:games' %}">
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Partidas</h2>
+          </button>
+        </a>
+      </div>
+
+      <div class="col-sm-4 p-1 mx-5 mt-3">
+        <a href="{% url 'moliuWeb:models' %}">
+          <button type="button" class="btn btn-light btn-block menu-option" style="height: 100px;">
+            <h2>Gestionar Modelos</h2>
+          </button>
+        </a>
+      </div>
+
+      <div class="col-sm-4 p-1 mx-5 mt-5">
+        <a href="{% url 'moliuWeb:logout' %}">
+          <button type="button" id="btn-logout" class="btn btn-light btn-block" style="height: 100px;">
+            <h2>Cerrar sesión</h2>
+          </button>
+        </a>
+      </div>
+    </div>
+
+    <div class="row justify-content-sm-center mt-5">
+      <div class="col-sm-2">
+        <img class="img-fluid mx-auto d-block mb-3" src="{% static 'moliuWeb/img/epsc.png' %}" alt="Logo EPSC" width="300px"/>
+      </div>
+      <div class="col-sm-2">
+        <img class="img-fluid mx-auto d-block mb-3" src="{% static 'moliuWeb/img/uco.png' %}" alt="Logo UCO" width="200px"/>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'moliuWeb/js/index.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{% extends 'moliuWeb/base.html' %}
+
+{% block title %} Moliu | Modificar partida {% endblock %}
+
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+      <div class="row mb-2">
+      <div class="col-sm-6">
+          <h1>Modificar partida</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:index' %}">Moliu</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:patients' %}">Partidas</a></li>
+        <li class="breadcrumb-item active">Modificar partida</li>
+        </ol>
+      </div>
+      </div>
+  </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Modifique los campos que desee</h3>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="name">Paciente</label>
+                            {{ form.patient }}
+                        </div>
+
+                        <div class="col-sm-6">
+                            <label for="description">Actividad</label>
+                            {{ form.activity }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Modificar partida</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+{{ block.super }}
+
+<script>
+  $(function () {
+      $('#games').addClass('active');
+  });
+</script>
+
+{% endblock %}

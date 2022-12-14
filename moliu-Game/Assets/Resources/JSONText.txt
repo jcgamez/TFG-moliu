@@ -1,0 +1,40 @@
+[
+  {
+    "name": "ACT2",
+    "description": "Description 2",
+    "background": null,
+    "points": [
+      {
+        "x": 269.5138854980469,
+        "y": 47.23956298828125,
+        "order": 1,
+        "duration": 5
+      },
+      {
+        "x": 794.5138854980469,
+        "y": 136.23956298828125,
+        "order": 2,
+        "duration": 5
+      }
+    ]
+  },
+  {
+    "name": "Hombros",
+    "description": "Descripcion patán",
+    "background": null,
+    "points": [
+      {
+        "x": 521.5138854980469,
+        "y": 222.23956298828125,
+        "order": 1,
+        "duration": 5
+      },
+      {
+        "x": 528.5138854980469,
+        "y": 373.23956298828125,
+        "order": 2,
+        "duration": 5
+      }
+    ]
+  }
+]

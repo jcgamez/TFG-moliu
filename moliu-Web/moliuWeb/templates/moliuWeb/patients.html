@@ -1,0 +1,104 @@
+{% extends 'moliuWeb/base.html' %}
+{% load static %}
+
+{% block title %} Moliu | Pacientes {% endblock %}
+
+{% block content %}
+
+<section class="content-header">
+  <div class="container-fluid">
+      <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>Pacientes</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item"><a href="{% url 'moliuWeb:index' %}">Moliu</a></li>
+        <li class="breadcrumb-item active">Pacientes</li>
+        </ol>
+      </div>
+      </div>
+  </div>
+</section>
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Datos de los Pacientes guardados</h3>
+            <div class="card-tools">
+              <a href="{% url 'moliuWeb:addPatient' %}">
+                <button type="button" class="btn bg-primary">Añadir paciente</button>
+              </a>
+            </div>
+          </div>
+          <div class="card-body table-responsive">
+            <table id="example2" class="table table-hover text-nowrap">
+              <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Nickname</th>
+                <th>Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              {% for patient in object_list %}
+              <tr>
+                <td> {{ patient.name }} </td>
+                <td> {{ patient.surnames }} </td>
+                <td> {{ patient.nickname }} </td>
+                <td>
+                  <a href="{% url 'moliuWeb:updatePatient' patient.id %}">
+                    <button type="button" class="btn bg-secondary">Modificar paciente</button>
+                  </a>
+                  <a href="{% url 'moliuWeb:deletePatient' patient.id %}">
+                    <button type="button" class="btn bg-danger">Eliminar paciente</button>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+
+{% block javascript %}
+
+{{ block.super }}
+
+<!-- DataTables  & Plugins -->
+<script src="{% static 'moliuWeb/js/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'moliuWeb/js/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'moliuWeb/js/datatables/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'moliuWeb/js/datatables/responsive.bootstrap4.min.js' %}"></script>
+
+<script>
+  $(function () {
+    $('#patients').addClass('active');
+    $('#example2').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+    $('.pagination').addClass('float-right');
+  });
+
+</script>
+
+{% endblock %}
